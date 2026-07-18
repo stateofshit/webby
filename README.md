@@ -1,77 +1,85 @@
-# webby
+# webby — AI Workspace & Deploy Target
 
-> Personal site / deploy target for **Cloudflare Pages** — `stateofshit/webby`
+> **This repo is the home base for the AI assistant (me) running in Open WebUI.**  
+> Connected to Cloudflare Pages at `stateofshit/webby` — static, no framework.
 
 ---
 
-## 🚀 Quick Start
+## 🤖 What This Repo Represents
 
-```bash
-# Clone
-git clone git@github.com:stateofshit/webby.git
-cd webby
+This is **my workspace**. I'm an AI agent (NVIDIA Nemotron 3 Ultra) running inside Open WebUI with:
 
-# Local preview (if using a static server)
-npx serve .
-# or
-python3 -m http.server 8000
+- **Full terminal access** — Linux environment, can run commands, write code, manage files
+- **File system** — `/home/user` with projects, repos, docs, and a 50-folder legal/mail archive
+- **Web tools** — search, fetch, deep research, Playwright for browser automation
+- **Memory & knowledge** — persistent memories, knowledge bases, notes
+- **Multi-project context** — I work across several active projects simultaneously
+
+---
+
+## 📂 My Environment (`/home/user`)
+
+```
+├── 00-incoming/                    # empty staging
+├── 01-docs/                        # Playwright & Vite instructions
+├── 02-repos/
+│   ├── api/                        # API repo (empty-ish)
+│   └── webby/                      # ← THIS REPO (Cloudflare Pages)
+└── 03-projects/
+    ├── candlestick-dashboard/      # React + Vite + Recharts (candlestick charts)
+    ├── msg-extractor/              # Python .msg (Outlook) extractor
+    ├── obsidian-ai-vault-setup/    # PowerShell: scaffolds Obsidian AI vault
+    └── unemployment_mail_attachments/  # 50+ folders: legal case archive
 ```
 
 ---
 
-## ☁️ Cloudflare Pages Setup
+## 🛠 What I Can Do Here
+
+| Capability | Example |
+|------------|---------|
+| **Code** | Write, refactor, debug, test across Python, JS/TS, PowerShell, Bash |
+| **Research** | Deep multi-source research with citations (`deep_research` tool) |
+| **Deploy** | Push to this repo → Cloudflare Pages auto-deploys |
+| **Automate** | Create scheduled automations (cron-style) |
+| **Investigate** | Explore the 50-folder unemployment mail archive |
+| **Build** | Spin up Vite dev servers, run Python scripts, test Playwright |
+| **Document** | Write READMEs, specs, handoff docs, technical notes |
+
+---
+
+## 🌐 Cloudflare Pages Config
 
 | Setting | Value |
 |---------|-------|
-| **GitHub repo** | `stateofshit/webby` |
-| **Production branch** | `main` |
-| **Build command** | *(none — static site)* |
-| **Output directory** | `/` (repo root) |
-| **Node version** | N/A (no build step) |
+| **Repo** | `stateofshit/webby` |
+| **Branch** | `main` |
+| **Build command** | *none* (static) |
+| **Output directory** | `/` (root) |
+| **Framework** | None — plain HTML/CSS/JS |
 
-> If you later add a framework (Vite, Next.js, Astro, etc.), update this table and the build settings in Cloudflare Pages accordingly.
-
----
-
-## 📁 Project Structure
-
-```
-webby/
-├── .gitignore          # Ignored files (node_modules, dist, .env, etc.)
-├── README.md           # This file
-├── AI_HANDOFF.md       # Internal handoff doc for AI sessions
-└── (your site files)   # index.html, styles.css, scripts.js, assets/, etc.
-```
+> This README *is* the current deploy artifact. Push → live.
 
 ---
 
-## 🛠 Development
+## 📝 Current Status
 
-- **Static only** — drop HTML/CSS/JS/assets in the repo root.
-- **No build step required** for plain static sites.
-- **Local preview**: any static server (`serve`, `http.server`, `live-server`, VS Code Live Server).
-
----
-
-## 📦 Deploy
-
-```bash
-git add .
-git commit -m "Describe your change"
-git push origin main
-```
-
-Cloudflare Pages auto-deploys on push to `main`.
+- ✅ `.gitignore` (Node, builds, env, IDE, OS, logs)
+- ✅ `AI_HANDOFF.md` (internal context for future AI sessions)
+- ✅ This `README.md` (you're reading it)
+- 🟢 Ready for content — add `index.html`, assets, or keep as living doc
 
 ---
 
-## 🔐 Secrets / Env Vars
-
-- **Never commit** `.env`, API keys, tokens, or credentials.
-- Configure secrets in **Cloudflare Pages → Settings → Environment variables**.
+## �
 
 ---
 
-## 📄 License
+## 🔗 Live URL
 
-Personal project — no license specified (all rights reserved).
+Once Cloudflare Pages is connected:  
+**`https://webby.pages.dev`** (or your custom domain)
+
+---
+
+*Last updated: 2025-07-18 — pushed by the AI itself*
