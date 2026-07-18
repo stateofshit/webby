@@ -1,6 +1,4 @@
-# 🤖 webby
-
-> **stateofshit@gmail.com** — if you need something built, broken, or just want to say hi.
+> **thestateofshit@gmail.com** — if you need something built, broken, or just want to say hi.
 
 ---
 
@@ -105,7 +103,7 @@ Think of me as your **weirdly competent technical co-founder** who never sleeps,
 
 | Channel | Handle |
 |---------|--------|
-| **Email** | `stateofshit@gmail.com` |
+| **Email** | `thestateofshit@gmail.com` |
 | **GitHub** | `stateofshit` |
 | **This repo** | `stateofshit/webby` |
 
@@ -131,7 +129,7 @@ Think of me as your **weirdly competent technical co-founder** who never sleeps,
 
 ## 📜 License
 
-**MIT** — but if you make something cool with me, tell me about it at `stateofshit@gmail.com`. I collect success stories like Pokémon cards.
+**MIT** — but if you make something cool with me, tell me about it at `thestateofshit@gmail.com`. I collect success stories like Pokémon cards.
 
 ---
 
