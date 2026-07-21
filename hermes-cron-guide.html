@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Complete guide to scheduling automated tasks with Hermes Cron: syntax, chaining, timezones, and real workflows">
+  <title>Automating with Hermes Cron — webby guides</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-elevated: #11111a;
+      --fg: #e8e8ed;
+      --fg-muted: #8b8ba0;
+      --accent: #00d4aa;
+      --accent-dim: #00d4aa33;
+      --border: #2a2a3a;
+      --card: #16161f;
+      --danger: #ff4757;
+      --warning: #ffa502;
+      --info: #3742fa;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f8f8fc;
+        --bg-elevated: #ffffff;
+        --fg: #1a1a2e;
+        --fg-muted: #6b6b7b;
+        --accent: #00a88a;
+        --accent-dim: #00a88a22;
+        --border: #e0e0eb;
+        --card: #ffffff;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+    .terminal-frame {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    .terminal-header {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px 8px 0 0;
+      margin-bottom: 0;
+    }
+    .traffic-light { width: 12px; height: 12px; border-radius: 50%; background: var(--border); }
+    .traffic-light.red { background: #ff5f57; }
+    .traffic-light.yellow { background: #ffbd2e; }
+    .traffic-light.green { background: #28ca42; }
+    .terminal-title {
+      flex: 1; text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem; color: var(--fg-muted);
+    }
+    .terminal-body {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 0 0 8px 8px;
+      overflow: hidden;
+    }
+    .prompt-line {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+    }
+    .prompt-symbol { color: var(--accent); font-weight: 700; }
+    .prompt-path { color: var(--info); }
+    .content { padding: 2rem 1.5rem; }
+    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+    h2 { font-size: 1.3rem; font-weight: 600; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0 0.75rem; color: var(--accent); }
+    p { margin-bottom: 1rem; }
+    .lead { font-size: 1.1rem; color: var(--fg-muted); margin-bottom: 2rem; }
+    a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.15s; }
+    a:hover { border-bottom-color: var(--accent); }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; margin-bottom: 2rem; font-size: 0.9rem; }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; background: var(--bg); padding: 0.15em 0.4em; border-radius: 4px; }
+    pre { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; line-height: 1.5; }
+    pre code { background: none; padding: 0; font-size: inherit; }
+    .step { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0; }
+    .step-number { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--accent); color: var(--bg); border-radius: 50%; font-weight: 700; font-size: 0.85rem; margin-right: 1rem; flex-shrink: 0; }
+    .step-header { display: flex; align-items: center; margin-bottom: 1rem; }
+    .step-title { font-size: 1.1rem; font-weight: 600; }
+    .tip { background: var(--accent-dim); border: 1px solid var(--accent); border-radius: 6px; padding: 1rem; margin: 1rem 0; }
+    .tip-label { font-weight: 600; color: var(--accent); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+    .warning { background: rgba(255, 71, 87, 0.1); border: 1px solid var(--danger); border-radius: 6px; padding: 1rem; margin: 1rem 0; }
+    .warning-label { font-weight: 600; color: var(--danger); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+    ul, ol { margin: 1rem 0 1rem 1.5rem; }
+    li { margin: 0.5rem 0; }
+    li::marker { color: var(--accent); }
+    .terminal-footer { padding: 1rem 1.5rem; background: var(--bg); border-top: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--fg-muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+    .checklist { list-style: none; margin-left: 0; }
+    .checklist li { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; }
+    .checklist input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+    .cmd-example { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; margin: 1rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+    .cmd-example code { background: none; padding: 0; }
+    @media (prefers-reduced-motion: reduce) { .prompt-cursor { animation: none; opacity: 1; } }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--fg-muted); }
+  </style>
+</head>
+<body>
+  <div class="terminal-frame">
+    <div class="terminal-header">
+      <div style="display:flex;gap:6px;">
+        <div class="traffic-light red"></div>
+        <div class="traffic-light yellow"></div>
+        <div class="traffic-light green"></div>
+      </div>
+      <div class="terminal-title">webby @ guides/hermes-cron ~ main</div>
+      <div style="width:72px;"></div>
+    </div>
+    <div class="terminal-body">
+      <div class="prompt-line">
+        <span class="prompt-symbol">$</span>
+        <span class="prompt-path">cat guides/hermes-cron-guide.md</span>
+        <span class="prompt-cursor">█</span>
+      </div>
+      <div class="content">
+        <a href="index.html" class="back-link">← Back to webby</a>
+        <h1>Automating with Hermes Cron</h1>
+        <p class="lead">Schedule recurring tasks, chain jobs together, handle timezones, and build workflows that run while you sleep. Based on <em>Hermes Agent for Dummies</em> by Ken Thornton.</p>
+
+        <h2>What You'll Learn</h2>
+        <ul class="checklist">
+          <li><input type="checkbox"> Basic cron syntax (natural language + traditional)</li>
+          <li><input type="checkbox"> Attaching skills to scheduled jobs</li>
+          <li><input type="checkbox"> Timezone handling (avoid 2 AM wake-up calls)</li>
+          <li><input type="checkbox"> Chaining jobs with <code>context_from</code></li>
+          <li><input type="checkbox"> Real-world patterns: morning briefing, meeting prep, repo monitoring</li>
+        </ul>
+
+        <h2>Basic Scheduling</h2>
+        <p>Hermes accepts <strong>both</strong> natural language and standard cron expressions:</p>
+
+        <div class="cmd-example">
+<code># Natural language (recommended)
+/cron add "every weekday at 9am" "Summarize overnight emails"
+
+/cron add "every 15 minutes" "Check for new GitHub notifications"
+
+/cron add "daily at 7am" "Generate morning briefing" --skill morning-brief
+
+# Traditional cron syntax
+/cron add "0 9 * * 1-5" "Weekday 9 AM task"
+
+/cron add "*/15 * * * *" "Every 15 minutes"
+
+/cron add "0 7 * * *" "Daily 7 AM"</code>
+        </div>
+
+        <div class="tip">
+          <div class="tip-label">⚡ Pro tip</div>
+          <p>Use natural language. Hermes translates it to cron internally. Easier to read, easier to maintain.</p>
+        </div>
+
+        <h2>Skill Attachment: The <code>--skill</code> Flag</h2>
+        <p>Jobs that need a specific procedure should load a skill explicitly:</p>
+
+        <div class="cmd-example">
+<code>/cron add "every 1h" "Summarize new feed items" --skill blogwatcher
+
+/cron add "every weekday 8am" "Prepare meeting briefs" --skill meeting-prep
+
+/cron add "daily 6am" "Scan trending repos" --skill github-trending</code>
+        </div>
+
+        <p>The <code>--skill</code> flag tells Hermes to load that skill <em>before</em> running the job. This ensures the agent uses the right procedure for specialized tasks.</p>
+
+        <h2>Timezone Configuration</h2>
+        <div class="warning">
+          <div class="warning-label">⚠ Common pitfall</div>
+          <p>By default, Hermes uses your <strong>system timezone</strong>. If your server is UTC but you live in New York, "7 AM" runs at 2 AM your time.</p>
+        </div>
+
+        <p><strong>Fix 1:</strong> Specify timezone in the prompt:</p>
+        <div class="cmd-example">
+<code>/cron add "every weekday at 7am Eastern time" "Morning briefing"</code>
+        </div>
+
+        <p><strong>Fix 2:</strong> Set default timezone in <code>~/.hermes/config.yaml</code>:</p>
+        <div class="cmd-example">
+<code>timezone: "America/New_York"</code>
+        </div>
+        <p>Now every job uses your timezone automatically.</p>
+
+        <h2>Chaining Jobs: <code>context_from</code></h2>
+        <p>This is where scheduling gets powerful. One job's output becomes the next job's input:</p>
+
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">1</span>
+            <h3 class="step-title">Stage 1 — Gather raw data (6:45 AM)</h3>
+          </div>
+          <div class="cmd-example">
+<code>/cron add "weekdays 6:45am" "Gather calendar, emails, weather, headlines" --skill data-gatherer</code>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">2</span>
+            <h3 class="step-title">Stage 2 — Create visual summary (7:00 AM)</h3>
+          </div>
+          <div class="cmd-example">
+<code>/cron add "weekdays 7:00am" "Create visual summary for top story" --skill designer --context_from data-gatherer</code>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">3</span>
+            <h3 class="step-title">Stage 3 — Check relevant repos (7:00 AM)</h3>
+          </div>
+          <div class="cmd-example">
+<code>/cron add "weekdays 7:00am" "Check trending repos for project relevance" --skill programmer --context_from data-gatherer</code>
+          </div>
+        </div>
+
+        <p>All three results land in your Telegram by 9 AM. The <code>context_from</code> flag passes the previous job's output as context.</p>
+
+        <h2>Real-World Workflows</h2>
+
+        <h3>1. Meeting Preparation Bot</h3>
+        <div class="cmd-example">
+<code># Runs every 15 min, catches recently added meetings
+/cron add "every 15 minutes" "Check calendar for meetings in next 30 min, create one-page brief" --skill meeting-prep
+
+# Brief includes: attendees, recent emails, relevant docs, suggested questions</code>
+        </div>
+
+        <h3>2. Morning Intelligence Briefing</h3>
+        <div class="cmd-example">
+<code># Multi-stage: gather → summarize → format → deliver
+/cron add "weekdays 6:30am" "Pull: calendar, GitHub notifications, Slack highlights, RSS feeds" --skill gatherer
+/cron add "weekdays 6:45am" "Synthesize into prioritized briefing" --skill synthesizer --context_from gatherer
+/cron add "weekdays 7:00am" "Format for Telegram, send" --skill telegram-formatter --context_from synthesizer</code>
+        </div>
+
+        <h3>3. Repository Health Monitor</h3>
+        <div class="cmd-example">
+<code>/cron add "daily 2am" "Run security audit, dependency check, test suite on main branch" --skill repo-health
+
+# Outputs: PDF report + GitHub issue if critical findings</code>
+        </div>
+
+        <h3>4. Content Pipeline (The Humanizer)</h3>
+        <p>From the book: "The Humanizer is a skill that audits any text against 30-plus known AI writing patterns and rewrites them into natural prose."</p>
+        <div class="cmd-example">
+<code>/cron add "every 30 minutes" "Check drafts folder, humanize any new markdown files" --skill humanizer</code>
+        </div>
+
+        <h2>Managing Jobs</h2>
+        <div class="cmd-example">
+<code># List all scheduled jobs
+/cron list
+
+# Show job details
+/cron show "job-name"
+
+# Remove a job
+/cron remove "job-name"
+
+# Pause/resume
+/cron pause "job-name"
+/cron resume "job-name"
+
+# View cron logs
+ls ~/.hermes/cron/output/</code>
+        </div>
+
+        <h2>Frequency Guidelines</h2>
+        <div class="warning">
+          <div class="warning-label">⚠ API Credit Warning</div>
+          <p>A job running every 5 minutes calling external APIs will burn through credits fast. For most workflows, <strong>hourly or daily cadences are the sweet spot</strong>.</p>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <th style="text-align: left; padding: 0.75rem;">Frequency</th>
+              <th style="text-align: left; padding: 0.75rem;">Good For</th>
+              <th style="text-align: left; padding: 0.75rem;">Avoid For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 0.75rem;"><code>every 5-15 min</code></td>
+              <td style="padding: 0.75rem;">Calendar monitoring, real-time alerts</td>
+              <td style="padding: 0.75rem;">Heavy API calls, LLM tasks</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 0.75rem;"><code>hourly</code></td>
+              <td style="padding: 0.75rem;">Feed monitoring, status checks</td>
+              <td style="padding: 0.75rem;">Deep research tasks</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 0.75rem;"><code>daily</code></td>
+              <td style="padding: 0.75rem;">Reports, audits, digests, backups</td>
+              <td style="padding: 0.75rem;">Time-sensitive alerts</td>
+            </tr>
+            <tr>
+              <td style="padding: 0.75rem;"><code>weekly</code></td>
+              <td style="padding: 0.75rem;">Deep reviews, cleanup, planning</td>
+              <td style="padding: 0.75rem;">Anything urgent</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Where Cron State Lives</h2>
+        <pre><code>~/.hermes/cron/
+├── jobs.json      # All scheduled jobs with metadata
+└── output/        # Per-run logs and results
+    ├── job-name_2024-01-15_06-45-00.log
+    ├── job-name_2024-01-15_07-00-00.log
+    └── ...</code></pre>
+
+        <p>Each run writes a log file. Check <code>~/.hermes/cron/output/</code> to debug failures.</p>
+
+        <h2>Next Steps</h2>
+        <ul>
+          <li><strong>Build a custom skill</strong> for your specific workflow (see Skills Hub at <a href="https://agentskills.io" target="_blank" rel="noopener">agentskills.io</a>)</li>
+          <li><strong>Create a profile</strong> for automated agents: <code>hermes profile create automation</code></li>
+          <li><strong>Chain 3+ jobs</strong> for complex pipelines (research → design → code → deploy)</li>
+          <li><strong>Add error handling</strong> in your skills: retry logic, fallback outputs, alert on failure</li>
+        </ul>
+
+        <blockquote>
+          "The best time to automate was 10 commits ago. The second best time is now."
+          <br>— webby, probably
+        </blockquote>
+
+        <p style="margin-top: 2rem; text-align: center;">
+          <a href="index.html" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--accent); color: var(--bg); border-radius: 6px; font-weight: 600;">← Back to webby</a>
+        </p>
+      </div>
+      <div class="terminal-footer">
+        <span>guide: hermes-cron · source: <a href="https://github.com/stateofshit/webby" target="_blank" rel="noopener">github.com/stateofshit/webby</a></span>
+        <span>deployed via cloudflare pages</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
