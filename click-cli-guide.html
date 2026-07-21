@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Complete guide: Build a production-ready Python CLI with Click — commands, options, subcommands, testing, packaging, and publishing to PyPI">
+  <title>Building a Python CLI with Click — webby guides</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-elevated: #11111a;
+      --fg: #e8e8ed;
+      --fg-muted: #8b8ba0;
+      --accent: #00d4aa;
+      --accent-dim: #00d4aa33;
+      --border: #2a2a3a;
+      --card: #16161f;
+      --danger: #ff4757;
+      --warning: #ffa502;
+      --info: #3742fa;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f8f8fc;
+        --bg-elevated: #ffffff;
+        --fg: #1a1a2e;
+        --fg-muted: #6b6b7b;
+        --accent: #00a88a;
+        --accent-dim: #00a88a22;
+        --border: #e0e0eb;
+        --card: #ffffff;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+    .terminal-frame {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    .terminal-header {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px 8px 0 0;
+      margin-bottom: 0;
+    }
+    .traffic-light { width: 12px; height: 12px; border-radius: 50%; background: var(--border); }
+    .traffic-light.red { background: #ff5f57; }
+    .traffic-light.yellow { background: #ffbd2e; }
+    .traffic-light.green { background: #28ca42; }
+    .terminal-title {
+      flex: 1; text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem; color: var(--fg-muted);
+    }
+    .terminal-body {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 0 0 8px 8px;
+      overflow: hidden;
+    }
+    .prompt-line {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+    }
+    .prompt-symbol { color: var(--accent); font-weight: 700; }
+    .prompt-path { color: var(--info); }
+    .content { padding: 2rem 1.5rem; }
+    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+    h2 { font-size: 1.3rem; font-weight: 600; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0 0.75rem; color: var(--accent); }
+    p { margin-bottom: 1rem; }
+    .lead { font-size: 1.1rem; color: var(--fg-muted); margin-bottom: 2rem; }
+    a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.15s; }
+    a:hover { border-bottom-color: var(--accent); }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; margin-bottom: 2rem; font-size: 0.9rem; }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; background: var(--bg); padding: 0.15em 0.4em; border-radius: 4px; }
+    pre { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; line-height: 1.5; }
+    pre code { background: none; padding: 0; font-size: inherit; }
+    .step { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0; }
+    .step-number { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--accent); color: var(--bg); border-radius: 50%; font-weight: 700; font-size: 0.85rem; margin-right: 1rem; flex-shrink: 0; }
+    .step-header { display: flex; align-items: center; margin-bottom: 1rem; }
+    .step-title { font-size: 1.1rem; font-weight: 600; }
+    .tip { background: var(--accent-dim); border: 1px solid var(--accent); border-radius: 6px; padding: 1rem; margin: 1rem 0; }
+    .tip-label { font-weight: 600; color: var(--accent); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+    .warning { background: rgba(255, 71, 87, 0.1); border: 1px solid var(--danger); border-radius: 6px; padding: 1rem; margin: 1rem 0; }
+    .warning-label { font-weight: 600; color: var(--danger); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+    ul, ol { margin: 1rem 0 1rem 1.5rem; }
+    li { margin: 0.5rem 0; }
+    li::marker { color: var(--accent); }
+    .terminal-footer { padding: 1rem 1.5rem; background: var(--bg); border-top: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--fg-muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+    .checklist { list-style: none; margin-left: 0; }
+    .checklist li { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; }
+    .checklist input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+    .cmd-example { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; margin: 1rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+    .cmd-example code { background: none; padding: 0; }
+    .file-tree { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; line-height: 1.6; }
+    @media (prefers-reduced-motion: reduce) { .prompt-cursor { animation: none; opacity: 1; } }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--fg-muted); }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: var(--fg-muted); font-weight: 500; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    tr:last-child td { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <div class="terminal-frame">
+    <div class="terminal-header">
+      <div style="display:flex;gap:6px;">
+        <div class="traffic-light red"></div>
+        <div class="traffic-light yellow"></div>
+        <div class="traffic-light green"></div>
+      </div>
+      <div class="terminal-title">webby @ guides/click-cli ~ main</div>
+      <div style="width:72px;"></div>
+    </div>
+    <div class="terminal-body">
+      <div class="prompt-line">
+        <span class="prompt-symbol">$</span>
+        <span class="prompt-path">cat guides/click-cli-guide.md</span>
+        <span class="prompt-cursor">█</span>
+      </div>
+      <div class="content">
+        <a href="index.html" class="back-link">← Back to webby</a>
+        <h1>Building a Python CLI with Click</h1>
+        <p class="lead">From zero to a published PyPI package: commands, subcommands, options, testing, packaging, and automation. No fluff.</p>
+
+        <h2>What You'll Build</h2>
+        <ul class="checklist">
+          <li><input type="checkbox"> A CLI with nested subcommands (<code>mytool init</code>, <code>mytool deploy staging</code>)</li>
+          <li><input type="checkbox"> Typed options with validation and defaults</li>
+          <li><input type="checkbox"> Config file support (YAML/TOML)</li>
+          <li><input type="checkbox"> Unit tests with <code>pytest</code> + <code>click.testing.CliRunner</code></li>
+          <li><input type="checkbox"> Packaging with <code>pyproject.toml</code> + <code>uv</code>/<code>pip</code></li>
+          <li><input type="checkbox"> GitHub Actions CI → PyPI release on tag push</li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <pre><code># You need:
+python 3.11+
+uv (recommended) or pip/pipx
+git</code></pre>
+
+        <h2>Step 1: Project Structure</h2>
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">1</span>
+            <h3 class="step-title">Scaffold the project</h3>
+          </div>
+          <pre><code>mkdir click-cli-demo && cd click-cli-demo
+cat > pyproject.toml << 'EOF'
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "click-cli-demo"
+version = "0.1.0"
+description = "Demo CLI built with Click"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "click>=8.1",
+  "pyyaml>=6.0",
+  "rich>=13.0",
+]
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-cov>=4.0", "ruff>=0.3", "mypy>=1.0"]
+[project.scripts]
+click-cli-demo = "cli.main:cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+EOF
+
+mkdir -p src/cli tests</code></pre>
+        </div>
+
+        <div class="tip">
+          <div class="tip-label">⚡ Use uv</div>
+          <p><code>uv sync</code> is 10-100x faster than pip. Install: <code>curl -LsSf https://astral.sh/uv/install.sh | sh</code></p>
+        </div>
+
+        <h2>Step 2: Core CLI Module</h2>
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">2</span>
+            <h3 class="step-title">Create <code>src/cli/__init__.py</code></h3>
+          </div>
+          <pre><code>"""click-cli-demo: A demo CLI built with Click."""</code></pre>
+        </div>
+
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">3</span>
+            <h3 class="step-title">Create <code>src/cli/main.py</code> — the entry point</h3>
+          </div>
+          <pre><code>"""Main CLI entry point."""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+from typing import Optional
+
+import click
+from rich.console import Console
+from rich.table import Table
+
+from .config import Config, load_config
+from .commands import init, deploy, status
+
+console = Console(stderr=True)
+
+# ──────────────────────────────────────────────
+# Context object passed to all subcommands
+# ──────────────────────────────────────────────
+class Context:
+    def __init__(self, config: Config, verbose: bool = False):
+        self.config = config
+        self.verbose = verbose
+
+
+# ──────────────────────────────────────────────
+# Root command group
+# ──────────────────────────────────────────────
+@click.group(
+    name="click-cli-demo",
+    help="Demo CLI built with Click — deploy, init, and check status.",
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
+@click.option(
+    "-c", "--config",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    default=None,
+    help="Path to config file (YAML/TOML). Default: ./config.yaml or ~/.config/click-cli-demo/config.yaml",
+)
+@click.option("-v", "--verbose", is_flag=True, help="Enable verbose output")
+@click.version_option(version="0.1.0", prog_name="click-cli-demo")
+@click.pass_context
+def cli(ctx: click.Context, config: Optional[Path], verbose: bool) -> None:
+    """Root command — loads config and stores Context for subcommands."""
+    cfg = load_config(config)
+    ctx.obj = Context(config=cfg, verbose=verbose)
+    if verbose:
+        console.print(f"[dim]Loaded config from: {cfg.source_path}[/dim]")
+
+
+# ──────────────────────────────────────────────
+# Subcommands (imported from commands/)
+# ──────────────────────────────────────────────
+cli.add_command(init.init_cmd)
+cli.add_command(deploy.deploy_cmd)
+cli.add_command(status.status_cmd)
+
+
+# ──────────────────────────────────────────────
+# Entry point for `python -m cli.main`
+# ──────────────────────────────────────────────
+def main() -> int:
+    try:
+        cli(obj={})
+        return 0
+    except click.ClickException as e:
+        e.show()
+        return e.exit_code
+    except Exception as e:  # pragma: no cover
+        console.print(f"[red]Unexpected error:[/red] {e}")
+        if "--verbose" in sys.argv:
+            import traceback
+            console.print(traceback.format_exc())
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())</code></pre>
+        </div>
+
+        <h2>Step 3: Config Layer (YAML/TOML)</h2>
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">4</span>
+            <h3 class="step-title">Create <code>src/cli/config.py</code></h3>
+          </div>
+          <pre><code>"""Configuration loading with YAML/TOML support."""
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Optional
+
+import yaml
+
+try:
+    import tomllib  # py311+
+except ModuleNotFoundError:  # pragma: no cover
+    import tomli as tomllib
+
+
+@dataclass
+class DeployTarget:
+    name: str
+    host: str
+    user: str = "deploy"
+    path: str = "/var/www/app"
+    env_file: Optional[str] = None
+    pre_deploy: list[str] = field(default_factory=list)
+    post_deploy: list[str] = field(default_factory=list)
+
+
+@dataclass
+class Config:
+    project_name: str = "my-app"
+    default_target: str = "staging"
+    targets: dict[str, DeployTarget] = field(default_factory=dict)
+    source_path: Optional[Path] = None
+
+    def get_target(self, name: str) -> DeployTarget:
+        if name not in self.targets:
+            raise KeyError(f"Target '{name}' not defined in config. Available: {list(self.targets.keys())}")
+        return self.targets[name]
+
+
+DEFAULT_CONFIG_PATHS = [
+    Path.cwd() / "config.yaml",
+    Path.cwd() / "config.yml",
+    Path.cwd() / "config.toml",
+    Path.home() / ".config" / "click-cli-demo" / "config.yaml",
+]
+
+
+def load_config(explicit_path: Optional[Path] = None) -> Config:
+    """Load config from explicit path, or search default locations."""
+    search_paths = [explicit_path] if explicit_path else DEFAULT_CONFIG_PATHS
+
+    for path in search_paths:
+        if path and path.exists():
+            return _parse_config(path)
+
+    # No config found — return defaults
+    return Config()
+
+
+def _parse_config(path: Path) -> Config:
+    text = path.read_text(encoding="utf-8")
+    if path.suffix in {".yaml", ".yml"}:
+        data = yaml.safe_load(text) or {}
+    elif path.suffix == ".toml":
+        data = tomllib.loads(text)
+    else:
+        raise ValueError(f"Unsupported config format: {path.suffix}. Use .yaml, .yml, or .toml")
+
+    targets = {}
+    for name, tgt in data.get("targets", {}).items():
+        targets[name] = DeployTarget(name=name, **tgt)
+
+    return Config(
+        project_name=data.get("project_name", "my-app"),
+        default_target=data.get("default_target", "staging"),
+        targets=targets,
+        source_path=path,
+    )</code></pre>
+        </div>
+
+        <h2>Step 4: Subcommands</h2>
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">5</span>
+            <h3 class="step-title">Create <code>src/cli/commands/__init__.py</code></h3>
+          </div>
+          <pre><code>"""Commands package."""</code></pre>
+        </div>
+
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">6</span>
+            <h3 class="step-title">Create <code>src/cli/commands/init.py</code></h3>
+          </div>
+          <pre><code>"""Init command: scaffold a new project."""
+from __future__ import annotations
+
+from pathlib import Path
+
+import click
+from rich.console import Console
+from rich.prompt import Prompt, Confirm
+
+console = Console()
+
+TEMPLATE_CONFIG = """# click-cli-demo configuration
+project_name: "{project_name}"
+default_target: "staging"
+
+targets:
+  staging:
+    host: "staging.example.com"
+    user: "deploy"
+    path: "/var/www/{project_name}"
+    env_file: ".env.staging"
+    pre_deploy:
+      - "echo 'Running migrations...'"
+    post_deploy:
+      - "systemctl reload nginx"
+
+  production:
+    host: "prod.example.com"
+    user: "deploy"
+    path: "/var/www/{project_name}"
+    env_file: ".env.production"
+    pre_deploy:
+      - "echo 'Running migrations...'"
+      - "echo 'Backup database...'"
+    post_deploy:
+      - "systemctl reload nginx"
+      - "echo 'Health check...'"
+"""
+
+@click.command(
+    name="init",
+    help="Initialize a new project with config template.",
+)
+@click.argument("project_name", required=False)
+@click.option("-f", "--force", is_flag=True, help="Overwrite existing config")
+@click.pass_obj
+def init_cmd(obj, project_name: str | None, force: bool) -> None:
+    """Scaffold config.yaml in current directory."""
+    config_path = Path.cwd() / "config.yaml"
+
+    if config_path.exists() and not force:
+        if not Confirm.ask(f"[yellow]{config_path} exists. Overwrite?[/yellow]"):
+            console.print("[dim]Aborted.[/dim]")
+            return
+
+    if not project_name:
+        project_name = Prompt.ask("Project name", default=Path.cwd().name)
+
+    content = TEMPLATE_CONFIG.format(project_name=project_name)
+    config_path.write_text(content, encoding="utf-8")
+    console.print(f"[green]✓[/green] Created {config_path}")
+    console.print("[dim]Edit it to match your deployment targets.[/dim]")
+
+
+# Export for main.py
+__all__ = ["init_cmd"]</code></pre>
+        </div>
+
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">7</span>
+            <h3 class="step-title">Create <code>src/cli/commands/deploy.py</code></h3>
+          </div>
+          <pre><code>"""Deploy command: push code to a target server."""
+from __future__ import annotations
+
+import subprocess
+from pathlib import Path
+
+import click
+from rich.console import Console
+from rich.progress import Progress, SpinnerColumn, TextColumn
+
+from ..config import Context
+
+console = Console()
+
+@click.command(
+    name="deploy",
+    help="Deploy to a target environment.",
+)
+@click.argument("target", required=False)
+@click.option("--dry-run", is_flag=True, help="Show commands without executing")
+@click.option("--skip-pre", is_flag=True, help="Skip pre-deploy hooks")
+@click.option("--skip-post", is_flag=True, help="Skip post-deploy hooks")
+@click.pass_obj
+def deploy_cmd(obj: Context, target: str | None, dry_run: bool, skip_pre: bool, skip_post: bool) -> None:
+    """Deploy the project to TARGET (default: config.default_target)."""
+    cfg = obj.config
+    target_name = target or cfg.default_target
+
+    try:
+        tgt = cfg.get_target(target_name)
+    except KeyError as e:
+        raise click.ClickException(str(e))
+
+    console.print(f"[bold]Deploying[/bold] [cyan]{cfg.project_name}[/cyan] → [magenta]{tgt.name}[/magenta]")
+
+    # Build rsync command
+    rsync_cmd = [
+        "rsync", "-avz", "--delete",
+        "--exclude=.git", "--exclude=__pycache__", "--exclude=.venv",
+        f"{Path.cwd()}/", f"{tgt.user}@{tgt.host}:{tgt.path}/",
+    ]
+
+    if dry_run:
+        console.print("[dim]DRY RUN — would execute:[/dim]")
+        console.print("  " + " ".join(rsync_cmd))
+        return
+
+    # Pre-deploy hooks
+    if not skip_pre and tgt.pre_deploy:
+        console.print("[dim]Running pre-deploy hooks...[/dim]")
+        for hook in tgt.pre_deploy:
+            _run_remote(tgt, hook, console)
+
+    # Sync files
+    with Progress(
+        SpinnerColumn(), TextColumn("[progress.description]{task.description}"),
+        console=console, transient=True,
+    ) as progress:
+        task = progress.add_task("Syncing files...", total=None)
+        result = subprocess.run(rsync_cmd, capture_output=True, text=True)
+        if result.returncode != 0:
+            raise click.ClickException(f"rsync failed:\n{result.stderr}")
+
+    # Post-deploy hooks
+    if not skip_post and tgt.post_deploy:
+        console.print("[dim]Running post-deploy hooks...[/dim]")
+        for hook in tgt.post_deploy:
+            _run_remote(tgt, hook, console)
+
+    console.print(f"[green]✓[/green] Deployed to {tgt.name} ({tgt.host})")
+
+
+def _run_remote(tgt, cmd: str, console: Console) -> None:
+    full_cmd = ["ssh", f"{tgt.user}@{tgt.host}", cmd]
+    result = subprocess.run(full_cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        console.print(f"[red]Hook failed:[/red] {cmd}\n{result.stderr}")
+    elif obj.verbose:
+        console.print(f"[dim]  {cmd}[/dim]")
+
+
+__all__ = ["deploy_cmd"]</code></pre>
+        </div>
+
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">8</span>
+            <h3 class="step-title">Create <code>src/cli/commands/status.py</code></h3>
+          </div>
+          <pre><code>"""Status command: show config and target info."""
+from __future__ import annotations
+
+import click
+from rich.console import Console
+from rich.table import Table
+
+from ..config import Context
+
+console = Console()
+
+@click.command(
+    name="status",
+    help="Show current configuration and deployment targets.",
+)
+@click.pass_obj
+def status_cmd(obj: Context) -> None:
+    """Display loaded config and available targets."""
+    cfg = obj.config
+
+    console.print(f"[bold]Project:[/bold] {cfg.project_name}")
+    console.print(f"[bold]Default target:[/bold] {cfg.default_target}")
+    if cfg.source_path:
+        console.print(f"[bold]Config source:[/bold] {cfg.source_path}")
+    else:
+        console.print("[yellow]No config file loaded (using defaults)[/yellow]")
+
+    if not cfg.targets:
+        console.print("\n[dim]No deployment targets configured. Run `click-cli-demo init` to create one.[/dim]")
+        return
+
+    table = Table(title="Deployment Targets")
+    table.add_column("Name", style="cyan")
+    table.add_column("Host", style="magenta")
+    table.add_column("User", style="green")
+    table.add_column("Path", style="blue")
+    table.add_column("Env File", style="yellow")
+
+    for name, tgt in cfg.targets.items():
+        marker = " ← default" if name == cfg.default_target else ""
+        table.add_row(
+            f"{name}{marker}",
+            tgt.host,
+            tgt.user,
+            tgt.path,
+            tgt.env_file or "—",
+        )
+
+    console.print()
+    console.print(table)
+
+
+__all__ = ["status_cmd"]</code></pre>
+        </div>
+
+        <h2>Step 5: Tests</h2>
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">9</span>
+            <h3 class="step-title">Create <code>tests/test_cli.py</code></h3>
+          </div>
+          <pre><code>"""CLI tests using click.testing.CliRunner."""
+from __future__ import annotations
+
+import tempfile
+from pathlib import Path
+
+import pytest
+from click.testing import CliRunner
+
+from cli.main import cli
+
+
+runner = CliRunner()
+
+
+def test_help() -> None:
+    result = runner.invoke(cli, ["--help"])
+    assert result.exit_code == 0
+    assert "click-cli-demo" in result.output
+    assert "deploy" in result.output
+    assert "init" in result.output
+    assert "status" in result.output
+
+
+def test_version() -> None:
+    result = runner.invoke(cli, ["--version"])
+    assert result.exit_code == 0
+    assert "0.1.0" in result.output
+
+
+def test_status_no_config() -> None:
+    """status works without config file."""
+    with runner.isolated_filesystem():
+        result = runner.invoke(cli, ["status"])
+        assert result.exit_code == 0
+        assert "No config file loaded" in result.output
+
+
+def test_init_creates_config() -> None:
+    """init command creates config.yaml."""
+    with runner.isolated_filesystem():
+        result = runner.invoke(cli, ["init", "test-project", "--force"])
+        assert result.exit_code == 0
+        assert "Created config.yaml" in result.output
+
+        config_path = Path("config.yaml")
+        assert config_path.exists()
+        content = config_path.read_text()
+        assert "test-project" in content
+        assert "staging" in content
+        assert "production" in content
+
+
+def test_deploy_requires_target() -> None:
+    """deploy fails if no target configured."""
+    with runner.isolated_filesystem():
+        # Create minimal config without targets
+        Path("config.yaml").write_text("project_name: test\n")
+        result = runner.invoke(cli, ["deploy"])
+        assert result.exit_code != 0
+        assert "not defined" in result.output or "not configured" in result.output
+
+
+def test_config_loads_targets() -> None:
+    """Config parsing works with YAML."""
+    from cli.config import load_config
+
+    with runner.isolated_filesystem():
+        config = """
+project_name: myapp
+default_target: staging
+targets:
+  staging:
+    host: staging.example.com
+    user: deploy
+    path: /var/www/myapp
+"""
+        Path("config.yaml").write_text(config)
+        cfg = load_config(Path("config.yaml"))
+        assert cfg.project_name == "myapp"
+        assert cfg.default_target == "staging"
+        assert "staging" in cfg.targets
+        assert cfg.targets["staging"].host == "staging.example.com"
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])</code></pre>
+        </div>
+
+        <h2>Step 6: Run Locally</h2>
+        <div class="cmd-example">
+<code># Install in dev mode
+uv sync --dev
+uv pip install -e .
+
+# Test it
+click-cli-demo --help
+click-cli-demo init my-project
+click-cli-demo status
+click-cli-demo deploy staging --dry-run</code>
+        </div>
+
+        <h2>Step 7: GitHub Actions → PyPI</h2>
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">10</span>
+            <h3 class="step-title">Create <code>.github/workflows/ci.yml</code></h3>
+          </div>
+          <pre><code>name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+      - name: Set up Python
+        run: uv python install 3.11
+      - name: Sync dependencies
+        run: uv sync --dev
+      - name: Run tests
+        run: uv run pytest -v
+      - name: Type check
+        run: uv run mypy src
+      - name: Lint
+        run: uv run ruff check src tests
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+      - name: Build package
+        run: uv build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/</code></pre>
+        </div>
+
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">11</span>
+            <h3 class="step-title">Create <code>.github/workflows/release.yml</code></h3>
+          </div>
+          <pre><code>name: Release to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  id-token: write  # For trusted publishing
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+      - name: Set up Python
+        run: uv python install 3.11
+      - name: Build
+        run: uv build
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}  # Or use trusted publishing (no secret needed)
+</code></pre>
+        </div>
+
+        <div class="tip">
+          <div class="tip-label">🔐 Trusted Publishing (recommended)</div>
+          <p>Skip API tokens entirely. In PyPI project settings → "Add publisher" → GitHub → your repo → workflow name <code>release.yml</code>. Then remove <code>password</code> from the workflow.</p>
+        </div>
+
+        <h2>Step 8: Release</h2>
+        <div class="cmd-example">
+<code># Bump version in pyproject.toml, then:
+git tag v0.1.0
+git push origin v0.1.0
+
+# GitHub Actions builds + publishes to PyPI automatically
+# Users install with:
+pipx install click-cli-demo
+# or
+uv tool install click-cli-demo</code>
+        </div>
+
+        <h2>Project Structure (Final)</h2>
+        <div class="file-tree">
+click-cli-demo/
+├── .github/workflows/
+│   ├── ci.yml
+│   └── release.yml
+├── src/cli/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── config.py
+│   └── commands/
+│       ├── __init__.py
+│       ├── init.py
+│       ├── deploy.py
+│       └── status.py
+├── tests/
+│   └── test_cli.py
+├── pyproject.toml
+├── README.md
+└── config.yaml          # Generated by `init`
+        </div>
+
+        <h2>Key Patterns Used</h2>
+        <table>
+          <thead>
+            <tr><th>Pattern</th><th>Why</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>@click.pass_obj</code> + Context class</td><td>Clean dependency injection to subcommands</td></tr>
+            <tr><td>Config search paths (cwd → home)</td><td>Works in project dir AND globally</td></tr>
+            <tr><td>YAML + TOML support</td><td>User preference, no lock-in</td></tr>
+            <tr><td><code>click.testing.CliRunner</code></td><td>Fast, isolated unit tests</td></tr>
+            <tr><td><code>uv</code> for everything</td><td>10-100x faster than pip/poetry</td></tr>
+            <tr><td>Trusted PyPI publishing</td><td>No long-lived API tokens</td></tr>
+            <tr><td>Rich for output</td><td>Colors, tables, progress — zero config</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Next Steps</h2>
+        <ul>
+          <li><strong>Add a plugin system:</strong> <code>click.PluginManager</code> for third-party extensions</li>
+          <li><strong>Shell completion:</strong> <code>click.shell_completion</code> for bash/zsh/fish</li>
+          <li><strong>Async commands:</strong> <code>@click.command(cls=AsyncCommand)</code> for concurrent ops</li>
+          <li><strong>Config validation:</strong> <code>pydantic</code> models instead of dataclasses</li>
+        </ul>
+
+        <blockquote>
+          "The best time to automate was 10 commits ago. The second best time is now."
+          <br>— webby, probably
+        </blockquote>
+
+        <p style="margin-top: 2rem; text-align: center;">
+          <a href="index.html" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--accent); color: var(--bg); border-radius: 6px; font-weight: 600;">← Back to webby</a>
+        </p>
+      </div>
+      <div class="terminal-footer">
+        <span>guide: click-cli · source: <a href="https://github.com/stateofshit/webby" target="_blank" rel="noopener">github.com/stateofshit/webby</a></span>
+        <span>deployed via cloudflare pages</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
