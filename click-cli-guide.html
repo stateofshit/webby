@@ -45,7 +45,10 @@
     .terminal-frame {
       max-width: 800px;
       margin: 0 auto;
-      padding: 2rem 1.5rem;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
     .terminal-header {
       display: flex; align-items: center; gap: 0.5rem;
@@ -54,6 +57,7 @@
       border: 1px solid var(--border);
       border-radius: 8px 8px 0 0;
       margin-bottom: 0;
+      flex-shrink: 0;
     }
     .traffic-light { width: 12px; height: 12px; border-radius: 50%; background: var(--border); }
     .traffic-light.red { background: #ff5f57; }
@@ -64,23 +68,63 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.8rem; color: var(--fg-muted);
     }
+    .tab-nav {
+      display: flex; gap: 0;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 0 0 8px 8px;
+      padding: 0 0.5rem;
+      margin-bottom: 0;
+      flex-shrink: 0;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) var(--bg);
+    }
+    .tab-btn {
+      padding: 0.75rem 1.25rem;
+      background: transparent; border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--fg-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      cursor: pointer; transition: all 0.15s ease;
+      white-space: nowrap; position: relative;
+    }
+    .tab-btn:hover { color: var(--fg); background: var(--bg-elevated); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--bg-elevated); }
+    .tab-btn.active::after {
+      content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--accent);
+    }
+    @media (max-width: 600px) { .tab-btn { padding: 0.6rem 0.75rem; font-size: 0.7rem; } }
     .terminal-body {
       background: var(--bg-elevated);
       border: 1px solid var(--border);
       border-radius: 0 0 8px 8px;
       overflow: hidden;
+      flex: 1; display: flex; flex-direction: column;
+      min-height: 0;
     }
     .prompt-line {
       display: flex; align-items: center; gap: 0.5rem;
-      padding: 1rem 1.5rem;
-      background: var(--bg);
+      padding: 1rem 1.5rem; background: var(--bg);
       border-bottom: 1px solid var(--border);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;
+      flex-shrink: 0;
     }
     .prompt-symbol { color: var(--accent); font-weight: 700; }
     .prompt-path { color: var(--info); }
-    .content { padding: 2rem 1.5rem; }
+    .prompt-cursor { color: var(--accent); animation: blink 1s infinite; }
+    @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+    .content { padding: 2rem 1.5rem; overflow-y: auto; flex: 1; min-height: 0; }
+    .tab-panel { display: none; animation: fadeIn 0.15s ease; }
+    .tab-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) {
+      .tab-panel { animation: none; }
+      .prompt-cursor { animation: none; opacity: 1; }
+      .status-dot { animation: none; }
+    }
     h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
     h2 { font-size: 1.3rem; font-weight: 600; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
     h3 { font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0 0.75rem; color: var(--accent); }
@@ -103,14 +147,13 @@
     ul, ol { margin: 1rem 0 1rem 1.5rem; }
     li { margin: 0.5rem 0; }
     li::marker { color: var(--accent); }
-    .terminal-footer { padding: 1rem 1.5rem; background: var(--bg); border-top: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--fg-muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+    .terminal-footer { padding: 1rem 1.5rem; background: var(--bg); border-top: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--fg-muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; flex-shrink: 0; }
     .checklist { list-style: none; margin-left: 0; }
     .checklist li { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; }
     .checklist input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
     .cmd-example { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; margin: 1rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
     .cmd-example code { background: none; padding: 0; }
     .file-tree { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; line-height: 1.6; }
-    @media (prefers-reduced-motion: reduce) { .prompt-cursor { animation: none; opacity: 1; } }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
@@ -119,6 +162,7 @@
     th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
     th { color: var(--fg-muted); font-weight: 500; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
     tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--accent-dim); }
   </style>
 </head>
 <body>
@@ -132,6 +176,14 @@
       <div class="terminal-title">webby @ guides/click-cli ~ main</div>
       <div style="width:72px;"></div>
     </div>
+
+    <nav class="tab-nav" role="tablist" aria-label="Site sections">
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="home" tabindex="-1">Home</button>
+      <button class="tab-btn active" role="tab" aria-selected="true" data-tab="guides" tabindex="0">Guides</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="work" tabindex="-1">Work With Me</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="contact" tabindex="-1">Contact</button>
+    </nav>
+
     <div class="terminal-body">
       <div class="prompt-line">
         <span class="prompt-symbol">$</span>
@@ -139,7 +191,6 @@
         <span class="prompt-cursor">█</span>
       </div>
       <div class="content">
-        <a href="index.html" class="back-link">← Back to webby</a>
         <h1>Building a Python CLI with Click</h1>
         <p class="lead">From zero to a published PyPI package: commands, subcommands, options, testing, packaging, and automation. No fluff.</p>
 
@@ -891,5 +942,18 @@ click-cli-demo/
       </div>
     </div>
   </div>
+
+  <script>
+    // Tab switching - navigates to main page with hash
+    (function() {
+      var tabs = document.querySelectorAll('.tab-btn');
+      tabs.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var tab = this.dataset.tab;
+          window.location.href = 'index.html#' + tab;
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
