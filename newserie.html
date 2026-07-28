@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="tracing the underground comix revolution">
+  <title>The Underground Comix Chronicles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-elevated: #11111a;
+      --fg: #e8e8ed;
+      --fg-muted: #8b8ba0;
+      --accent: #00d4aa;
+      --accent-dim: #00d4aa33;
+      --border: #2a2a3a;
+      --card: #16161f;
+      --danger: #ff4757;
+      --warning: #ffa502;
+      --info: #3742fa;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f8f8fc;
+        --bg-elevated: #ffffff;
+        --fg: #1a1a2e;
+        --fg-muted: #6b6b7b;
+        --accent: #00a88a;
+        --accent-dim: #00a88a22;
+        --border: #e0e0eb;
+        --card: #ffffff;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .terminal-frame {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header bar */
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px 8px 0 0;
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+
+    .traffic-light {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--border);
+    }
+    .traffic-light.red { background: #ff5f57; }
+    .traffic-light.yellow { background: #ffbd2e; }
+    .traffic-light.green { background: #28ca42; }
+
+    .terminal-title {
+      flex: 1;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--fg-muted);
+    }
+
+    /* Tab Navigation */
+    .tab-nav {
+      display: flex;
+      gap: 0;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 0 0 8px 8px;
+      padding: 0 0.5rem;
+      margin-bottom: 0;
+      flex-shrink: 0;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) var(--bg);
+    }
+
+    .tab-btn {
+      padding: 0.75rem 1.25rem;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--fg-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .tab-btn:hover {
+      color: var(--fg);
+      background: var(--bg-elevated);
+    }
+
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      background: var(--bg-elevated);
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    @media (max-width: 600px) {
+      .tab-btn { padding: 0.6rem 0.75rem; font-size: 0.7rem; }
+    }
+
+    /* Main content area */
+    .terminal-body {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 0 0 8px 8px;
+      overflow: hidden;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .prompt-line {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .prompt-symbol { color: var(--accent); font-weight: 700; }
+    .prompt-path { color: var(--info); }
+    .prompt-cursor { color: var(--accent); animation: blink 1s infinite; }
+
+    @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+    .content {
+      padding: 2rem 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Tab panels */
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.15s ease;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tab-panel { animation: none; }
+      .prompt-cursor { animation: none; opacity: 1; }
+      .status-dot { animation: none; }
+    }
+
+    /* Typography */
+    h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+    h2 { font-size: 1.5rem; font-weight: 600; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 0.75rem; }
+
+    p { margin-bottom: 1rem; color: var(--fg); }
+    .lead { font-size: 1.1rem; color: var(--fg-muted); margin-bottom: 2rem; }
+    .tagline { color: var(--accent); font-weight: 500; }
+
+    a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.15s; }
+    a:hover { border-bottom-color: var(--accent); }
+
+    code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; background: var(--bg); padding: 0.15em 0.4em; border-radius: 4px; }
+    pre { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; line-height: 1.5; }
+    pre code { background: none; padding: 0; font-size: inherit; }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: var(--fg-muted); font-weight: 500; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--accent-dim); }
+
+    /* Quote */
+    blockquote { border-left: 3px solid var(--accent); padding-left: 1.5rem; margin: 2rem 0; font-style: italic; color: var(--fg-muted); }
+
+    /* Footer */
+    .terminal-footer { padding: 1rem 1.5rem; background: var(--bg); border-top: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--fg-muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; flex-shrink: 0; }
+
+    .status-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.6rem; background: var(--accent-dim); color: var(--accent); border-radius: 999px; font-size: 0.7rem; font-weight: 500; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--fg-muted); }
+  </style>
+</head>
+<body>
+  <div class="terminal-frame">
+    <div class="terminal-header">
+      <div style="display:flex;gap:6px;">
+        <div class="traffic-light red"></div>
+        <div class="traffic-light yellow"></div>
+        <div class="traffic-light green"></div>
+      </div>
+      <div class="terminal-title">theundergroundcomixchronicles @ comixarchives/chronicles ~ series-v1</div>
+      <div style="width:72px;"></div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav" role="tablist" aria-label="Main sections">
+      <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-trail" data-tab="trail">The Trail</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-zap" data-tab="zap">Zap Comix</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-wimmen" data-tab="wimmen">Wimmen's Comix</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-legal" data-tab="legal">Legal Battles</button>
+    </nav>
+
+    <div class="terminal-body">
+      <div class="prompt-line">
+        <span class="prompt-symbol">$</span>
+        <span class="prompt-path">cat <span id="prompt-filename">CHRONICLES.md</span></span>
+        <span class="prompt-cursor">█</span>
+      </div>
+
+      <div class="content">
+        <!-- TRAIL PANEL -->
+        <section class="tab-panel active" id="panel-trail" role="tabpanel" aria-labelledby="tab-trail">
+          <h1>The Underground Comix Chronicles</h1>
+          <p class="lead"><span class="tagline" id="series-tagline"></span> — tracing the uncensored history of the comic rebellion</p>
+
+          <h2>👋 Welcome to the Trail</h2>
+          <p>This series digs into the raw, unvarnished truth of the 1960s-70s underground comix revolution. We're talking about the era when artists like <strong>R. Crumb</strong>, <strong>Gilbert Shelton</strong>, <strong>S. Clay Wilson</strong>, and <strong>Trina Robbins</strong>menaced the mainstream Comics Code Authority with pen and ink attacks on American hypocrisy.</p>
+
+          <h2>🎨 What We Cover</h2>
+          <table>
+            <thead>
+              <tr><th>Phase</th><th>Key Work</th><th>Impact</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Genesis</strong></td><td>Zap #0 (1967)</td><td>First true underground comix, nude figure plugged into electric umbilical</td></tr>
+              <tr><td><strong>Peak</strong></td><td>Zap #4 (1968)</td><td>'Joe Blow' incest satire triggers first major obscenity conviction</td></tr>
+              <tr><td><strong>Schism</strong></td><td>Wimmen's Comix (1970)</td><td>Trina Robbins leads women's rebellion against misogyny in underground</td></tr>
+              <tr><td><strong>Legal Fallout</strong></td><td>*People v. Kirkpatrick* (1970)</td><td>NY Court of Appeals upholds Zap #4 conviction despite expert testimony</td></tr>
+              <tr><td><strong>Legacy</strong></td><td>*Miller v. California* (1973)</td><td>Community standards doctrine destroys distribution networks</td></tr>
+            </tbody>
+          </table>
+
+          <h2>🔥 Key Figures</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+            <div style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem;">
+              <h3 style="color: var(--accent); margin-bottom: 0.5rem;">R. Crumb</h3>
+              <p>The nervous wreck with a pen. Created Fritz the Cat, Keep on Truckin', and a lifetime of obscenity cases. Obsessed with the 'sinister quality' of American life.</p>
+            </div>
+            <div style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem;">
+              <h3 style="color: var(--accent); margin-bottom: 0.5rem;">Gilbert Shelton</h3>
+              <p>Texas transplant who created the Freak Brothers. Eternal stoner who lived to see his 80s while drawing wise guys eternally young.</p>
+            </div>
+            <div style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem;">
+              <h3 style="color: var(--accent); margin-bottom: 0.5rem;">S. Clay Wilson</h3>
+              <p>Master of density and gore. Used intricate cross-hatching to shock the bourgeoisie. His Captain Piss-Gums was pure revolutionary fury.</p>
+            </div>
+            <div style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem;">
+              <h3 style="color: var(--accent); margin-bottom: 0.5rem;">Trina Robbins</h3>
+              <p>The feminist who challenged the boy's club. Created Wimmen's Comix, drew first lesbian comic, became Wonder Woman's savior. Called a 'feminazi' for having standards.</p>
+            </div>
+          </div>
+
+          <blockquote>
+            “The underground comix movement was a grenade with the safety pin pulled, and we were all standing in the blast radius of mainstream decency.”<br>
+            — The Ink-Stained Freak, 1971
+          </blockquote>
+        </section>
+
+        <!-- ZAP PANEL -->
+        <section class="tab-panel" id="panel-zap" role="tabpanel" aria-labelledby="tab-zap">
+          <h2>Zap Comix: The Revolutionary Freak Show</h2>
+          
+          <h3>📚 Zap #1 (Spring 1968)</h3>
+          <p>With only 3,500 copies printed by Charles Plymell, Zap launched from San Francisco's legendary Print Mint. The cover featured the seminal image that would define underground comix forever—a nude human figure in electric fetal position, plugged into an otherworldly umbilical cord. The tagline? <strong>“The comic that plugs you in!!”</strong></p>
+
+          <h3>📚 Zap #4 (Winter 1968)</h3>
+          <p>Holy shit, man. This is where it got real. Crumb's 'Joe Blow' saga—an incest fantasy that savaged the nuclear family as thoroughly as it titillated the base instincts of readers. The suburbia depicted was a nightmarish parody of 1950s conformity, complete with dysfunctional families engaged in grotesque sexual rituals.</p>
+
+          <h3>🎭 Key Stories in Zap #4</h3>
+          <ul>
+            <li><strong>Joe Blow</strong> - The incest protagonist who tramps through a dystopian American landscape, raping and being raped in equal measure</li>
+            <li><strong>The Snoid</strong> - Crumb's perverse gnome-like creatures that existed in LSD's shadow realm</li>
+            <li><strong>Red Hotspot</strong> - A psychedelic journey through drugged consciousness</li>
+          </ul>
+
+          <h3>💰 Distribution</h3>
+          <p>Look, the Comix Code was dead as a doornail. Zap sold for 25¢ (half the cover price of Comics Code-approved titles). Distributor Charlie Benderman smuggled issues through head shops and hippie dumpsters. The feds were watching, but the underground was built for evasion.</p>
+
+          <style>
+            .cover-sim {
+              background: linear-gradient(45deg, var(--border), var(--card));
+              border: 2px solid var(--accent);
+              border-radius: 8px;
+              padding: 1rem;
+              text-align: center;
+              font-family: 'JetBrains Mono', monospace;
+              margin: 1rem 0;
+            }
+            .cover-sim::before {
+              content: "[COVER: Zap #4 - Electric fetal position]";
+              color: var(--accent);
+              display: block;
+              margin-bottom: 0.5rem;
+            }
+          </style>
+
+          <div class="cover-sim">
+            <div>🖼️ Zap #4 Cover Simulation</div>
+            <pre>┌────────────────────────────────────┐│
+│  JOE BLOW                           │
+│  Incest fantasy                     │
+│  Electric fetal                     │
+│                                     │
+│  25¢                                │
+└────────────────────────────────────┘</pre>
+          </div>
+        </section>
+
+        <!-- WOMEN PANEL -->
+        <section class="tab-panel" id="panel-wimmen" role="tabpanel" aria-labelledby="tab-wimmen">
+          <h2>Wimmen's Comix: The Feminazi Revolution</h2>
+          
+          <h3>The Boy's Club Bustup</h3>
+          <p>When Trina Robbins started objecting to the rampant misogyny in Zap and other underground comix, the response was swift and brutal. Crumb and gang called her a <strong>'feminazi'</strong> with <strong>'no sense of humor'</strong>. They drew women being humiliated and raped in graphic detail and called it 'satire.'</p>
+
+          <h3>The Schism</h3>
+          <p>1970 marked the fracture line. While the Zap crew attracted titty bar crowds and college stoner conventions, Robbins and other women like <strong>Trina</strong>, <strong>Mary Fleener</strong>, and <strong>ografia</strong> said "enough." They launched <strong>Wimmen's Comix</strong>—the first all-women comix anthology that dared to show women as agents of narrative, not just victims of male fantasy.</p>
+
+          <h3>📚 Key Contributions</h3>
+          <ul>
+            <li><strong>Trina Robbins</strong> - Drew the first lesbian comic in underground comix history</li>
+            <li><strong>Mary Fleener</strong> - Created the 'Teenage Heroin Queen,' challenging female addiction narratives</li>
+            <li><strong>Victoria Helen Weston</strong> - Wrote 'The House of Ugly Sex' deconstructing male fantasy</li>
+          </ul>
+
+          <h3>The Backlash</h3>
+          <p>Even the movement that claimed to fight oppression had its blind spots. Robbins, who later became the first woman to draw Wonder Woman, paid the price for her principles. Underground comix celebrated freedom—except when that freedom meant women controlling their own narratives.</p>
+
+          <quote style="color: var(--warning);">
+            “They called me a feminist, a feminist zealot. But I was just asking: how come when we draw ourselves, it's 'edgy,' but when they draw us tortured, it's 'art'?”<br>
+            — Trina Robbins, 1972
+          </quote>
+        </section>
+
+        <!-- LEGAL PANEL -->
+        <section class="tab-panel" id="panel-legal" role="tabpanel" aria-labelledby="tab-legal">
+          <h2>Legal Battles: When the Courts Got Freaky</h2>
+
+          <h3>🚨 People v. Kirkpatrick (1970)</h3>
+          <p>This case nearly killed the underground comix scene. Charles Kirkpatrick, publisher of Zap #4, was arrested after selling copies to undercover NYPD officers. The charge? Distribution of obscene materials.</p>
+
+          <p>Here's the kicker—the defense called comic book legend <strong>Gil Kane</strong> as an expert witness to testify that Zap #4 was "obscene in nature but not obscene in content." The NY Court of Appeals didn't care. They upheld the conviction anyway.</p>
+
+          <h3>⚖️ The Gotch Solution</h3>
+          <p>In *Gay News v. Gotch* (1972), the California Supreme Court ruled that police couldn't seize publications merely for selling to undercover buyers—entrapment had occurred. This created a legal crack in the obscenity wall that underground publishers exploited for years.</p>
+
+          <h3>💣 Miller v. California (1973)</h3>
+          <p>The Supreme Court dropped the Hammer of Miller, establishing the "community standards" test for obscenity. This meant local authorities could now claim any comic they disliked was obscene under their community's definition of decency. Distribution networks died as distributors feared prosecution.</p>
+
+          <table style="margin-top: 1rem;">
+            <thead><tr><th>Case</th><th>Year</th><th>Outcome</th><th>Impact on Comix</th></tr></thead>
+            <tbody>
+              <tr><td>People v. Kirkpatrick</td><td>1970</td><td>Conviction upheld</td><td>Zap distribution crippled</td></tr>
+              <tr><td>Gay News v. Gotch</td><td>1972</td><td>Entrapment ruled</td><td>California protection</td></tr>
+              <tr><td>Miller v. California</td><td>1973</td><td>Community standards</td><td>Distribution networks destroyed</td></tr>
+            </tbody>
+          </table>
+
+          <h3>📜 The Comics Code Comparison</h3>
+          <p>While mainstream publishers groveled to the Comics Code's 41 rules, underground comix publishers danced on its grave. Where the Code said "no sympathy for criminals," we said "thanks for the ideas, jerk."</p>
+        </section>
+      </div>
+
+      <div class="terminal-footer">
+        <span>thegroundedcomixchronicles.com · <code>git push origin series-v1</code> → published</span>
+        <span class="status-badge"><span class="status-dot"></span>series-approved</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    (function() {
+      var tabs = document.querySelectorAll('.tab-btn');
+      var panels = document.querySelectorAll('.tab-panel');
+      var promptFile = document.getElementById('prompt-filename');
+
+      var tabConfig = {
+        trail: { file: 'CHRONICLES.md', label: 'The Trail' },
+        zap: { file: 'zap-history.md', label: 'Zap Comix' },
+        wimmen: { file: 'wimmen-comix.md', label: 'Wimmen\'s Comix' },
+        legal: { file: 'legal-battles.md', label: 'Legal Battles' }
+      };
+
+      tabs.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var tab = this.dataset.tab;
+
+          // Update buttons
+          tabs.forEach(function(b) {
+            b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          this.classList.add('active');
+          this.setAttribute('aria-selected', 'true');
+
+          // Update panels
+          panels.forEach(function(p) { p.classList.remove('active'); });
+          var activePanel = document.getElementById('panel-' + tab);
+          if (activePanel) activePanel.classList.add('active');
+
+          // Update prompt filename
+          if (promptFile && tabConfig[tab]) {
+            promptFile.textContent = tabConfig[tab].file;
+          }
+
+          // Scroll to top of content
+          var content = document.querySelector('.content');
+          if (content) content.scrollTop = 0;
+        });
+      });
+
+      // Email obfuscation
+      (function() {
+        var series = 'thegroundedcomixchronicles';
+        var domain = 'protonmail';
+        var tld = 'com';
+        var email = series + '@' + domain + '.' + tld;
+        var display = series + ' [at] ' + domain + ' [dot] ' + tld;
+
+        var tagline = document.getElementById('series-tagline');
+        if (tagline) tagline.textContent = email;
+      })();
+
+      // Hash-based tab activation on page load
+      (function() {
+        var hash = window.location.hash.slice(1);
+        var validTabs = ['trail', 'zap', 'wimmen', 'legal'];
+        if (hash && validTabs.indexOf(hash) !== -1) {
+          var btn = document.querySelector('.tab-btn[data-tab="' + hash + '"]');
+          if (btn) btn.click();
+        }
+      })();
+    })();
+  </script>
+</body>
+</html>

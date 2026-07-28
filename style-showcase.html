@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Style Showcase - Technical writing and documentation patterns">
+  <title>Style Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-elevated: #11111a;
+      --fg: #e8e8ed;
+      --fg-muted: #8b8ba0;
+      --accent: #00d4aa;
+      --accent-dim: #00d4aa33;
+      --border: #2a2a3a;
+      --card: #16161f;
+      --danger: #ff4757;
+      --warning: #ffa502;
+      --info: #3742fa;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f8f8fc;
+        --bg-elevated: #ffffff;
+        --fg: #1a1a2e;
+        --fg-muted: #6b6b7b;
+        --accent: #00a88a;
+        --accent-dim: #00a88a22;
+        --border: #e0e0eb;
+        --card: #ffffff;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    header {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px 8px 0 0;
+      flex-shrink: 0;
+    }
+
+    .traffic-light {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--border);
+    }
+    .traffic-light.red { background: #ff5f57; }
+    .traffic-light.yellow { background: #ffbd2e; }
+    .traffic-light.green { background: #28ca42; }
+
+    .title {
+      flex: 1;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--fg-muted);
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      color: var(--fg);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 { font-size: 2.5rem; font-weight: 700; }
+    h2 { font-size: 1.8rem; font-weight: 600; }
+    h3 { font-size: 1.3rem; font-weight: 600; }
+    h4 { font-size: 1rem; font-weight: 600; }
+
+    .tagline { color: var(--accent); font-weight: 500; }
+
+    p, li { margin-bottom: 1rem; }
+    
+    a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.15s; }
+    a:hover { border-bottom-color: var(--accent); }
+
+    code { 
+      font-family: 'JetBrains Mono', monospace; 
+      font-size: 0.9em; 
+      background: var(--bg); 
+      padding: 0.1em 0.4em; 
+      border-radius: 4px;
+    }
+
+    pre { 
+      font-family: 'JetBrains Mono', monospace; 
+      font-size: 0.85rem; 
+      background: var(--card); 
+      border: 1px solid var(--border); 
+      border-radius: 8px; 
+      padding: 1.5rem; 
+      overflow-x: auto; 
+      margin: 1.5rem 0; 
+      line-height: 1.5;
+    }
+
+    .code-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    .quote {
+      border-left: 3px solid var(--accent);
+      padding-left: 1.5rem;
+      margin: 2rem 0;
+      font-style: italic;
+      color: var(--fg-muted);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .code-diff {
+      background: linear-gradient(to right, #1a1a1a 0%, #2a2a3a 100%);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+
+    .info-panel {
+      background: var(--accent-dim);
+      border-left: 4px solid var(--accent);
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    .warning-panel {
+      background: var(--danger);
+      background: rgba(255, 71, 87, 0.1);
+      border-left: 4px solid var(--danger);
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    .example {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      color: var(--fg-muted);
+      font-weight: 500;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--accent-dim); }
+
+    .command {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .parameter {
+      color: var(--info);
+    }
+
+    .flag {
+      color: var(--warning);
+    }
+
+    .output {
+      color: var(--warning);
+    }
+
+    .comment {
+      color: var(--fg-muted);
+    }
+
+    .library {
+      color: var(--accent);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="terminal-header">
+        <div style="display:flex;gap:6px;">
+          <div class="traffic-light red"></div>
+          <div class="traffic-light yellow"></div>
+          <div class="traffic-light green"></div>
+        </div>
+        <span class="title">style-showcase @ terminal-dweller/web-showcase ~ main</span>
+      </div>
+    </header>
+
+    <h1>📝 Style Guide & Documentation Patterns</h1>
+    <p class="tagline">theinkstained@protonmail.com — for when you need docs that actually help</p>
+
+    <h2>Writing Voice & Tone</h2>
+    <p>I write like I'm testifying in an obscenity trial — passionate, precise, and never letting the truth get lost in academic fog. Confessional where it matters, clinical where it needs to be.</p>
+
+    <div class="quote">
+      "The underground comix movement was a grenade with the safety pin pulled, and we were all standing in the blast radius of mainstream decency."<br>
+      — The Ink-Stained Freak, 1971<br><br>
+      "If you make something cool with me, tell me about it — I collect success stories like Pokémon cards."
+    </div>
+
+    <h3>Technical Documentation Patterns</h3>
+    
+    <div class="card">
+      <h4>API Reference Style</h4>
+      <p>Function signatures look like this:</p>
+      <div class="code-diff">
+        <span class="command">$</span> <span class="info">curl -X POST https://api.example.com/v1/data \</span><br>
+        <span class="info">  -H</span><span class="flag">"Authorization: Bearer YOUR_TOKEN"</span> \
+        <span class="info">  -H</span><span class="flag">"Content-Type: application/json"</span> \
+        <span class="info">  -d</span><span class="comment">'{"query": "...", "format": "json"}'</span>
+      </div>
+    </div>
+
+    <div class="code-diff" style="background: #0d0d0d; padding: 1.5rem;">
+      <span class="comment"># Module: auth.py</span><br>
+      <span class="comment"># Purpose: Handle JWT token validation with rate limiting</span><br><br>
+      <span class="library">def</span> <span class="command">validate_token</span>(token: <span class="library">str</span>, secret: <span class="library">str</span>):<br>
+      &nbsp;&nbsp;<span class="library">try</span>:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="library">return</span> jwt.decode(token, secret, algorithms=[<span class="flag">"HS256"</span>])<br>
+      &nbsp;&nbsp;<span class="library">except</span> jwt.ExpiredSignatureError:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="command">raise</span> <span class="library">AuthError</span>(<span class="comment">"Token expired"</span>)<br>
+      &nbsp;&nbsp;<span class="library">except</span> jwt.InvalidTokenError:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="command">raise</span> <span class="library">AuthError</span>(<span class="comment">"Invalid token"</span>)
+    </div>
+
+    <h4>Error Message Philosophy</h4>
+    <p>Good errors don't just say "something broke" — they guide the fix:</p>
+    <div class="card">
+      <code>const</code> <span class="library">err</span> <span class="pointer_operator">=</span> <span class="library">new</span> <span class="library">Error</span>(<span class="string">"Connection failed: check firewall rules on port 443"</span>)
+    </div>
+
+    <h3>Configuration Documentation</h3>
+    <table>
+      <thead>
+        <tr><th>Setting</th><th>Required</th><th>Default</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>timeout</code></td><td>No</td><td><code>30s</code></td><td>Request timeout with human-readable parsing</td></tr>
+        <tr><td><code>retry_count</code></td><td>No</td><td><code>3</code></td><td>Number of retries before failing (neural net hack)</td></tr>
+        <tr><td><code>log_level</code></td><td>No</td><td><code>info</code></td><td>Verbose level (debug|info|warn|error)</td></tr>
+      </tbody>
+    </table>
+
+    <h4>YAML Configuration Example</h4>
+    <div class="code-diff">
+      <span class="comment"># deployment.yaml - CI/CD pipeline</span><br>
+      <span class="flag">stages</span>:<br>
+      &nbsp;&nbsp;- <span class="string">test</span><br>
+      &nbsp;&nbsp;- <span class="string">deploy</span><br><br>
+      <span class="warning">test</span>:<br>
+      &nbsp;&nbsp;<span class="flag">script</span>:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="command">python -m pytest</span> tests/ --cov<br>
+      &nbsp;&nbsp;<span class="flag">artifacts</span>:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;- <span class="string">coverage.xml</span><br><br>
+      <span class="warning">deploy</span>:<br>
+      &nbsp;&nbsp;<span class="flag">only</span>:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;- <span class="string">main</span>
+    </div>
+
+    <h3>Command Line Documentation</h3>
+    <div class="code-diff" style="background: #1a1a1a;">
+      <span class="command">$ ./cli</span> <span class="flag">tool --help</span><br>
+      <span class="output">usage: cli [-h] [--verbose] [--config CONFIG] [--output {file,stdout}]</span><br><br>
+      <span class="output">options:</span><br>
+      <span class="output">  -h, --help            show this help message</span><br>
+      <span class="output">  --verbose, -v         Enable verbose logging</span><br>
+      <span class="output">  --config CONFIG       Path to config file</span><br>
+      <span class="output">  --output {file,stdout}  Output destination  [default: stdout]</span>
+    </div>
+
+    <h3>Architecture Decision Records</h4>
+    
+    <div class="info-panel">
+      <strong>ADR-001: Choose SQLite over Postgres for MVP</strong><br>
+      <span class="comment">Status: Accepted | Date: 2024-01-15</span><br><br>
+      <strong>Context:</strong> Early stage startup needed database without ops overhead.<br><br>
+      <strong>Decision:</strong> SQLite for local development and single-node deployment.<br><br>
+      <strong>Consequences:</strong><br>
+      &nbsp;&nbsp;+ Zero configuration<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="library">Future work:</span> Migration to Postgres at 1M users
+    </div>
+
+    <h3>Code Examples</h4>
+    
+    <div class="card">
+      <h5>Python CLI with Click</h5>
+      <pre><code><span class="comment">#!/usr/bin/env python3</span>
+<span class="library">import</span> <span class="library">click</span>
+
+<span class="library">@click</span>.<span class="command">command</span>()
+<span class="library">@click</span>.<span class="command">option</span>(<span class="flag">'--name'</span>, <span class="flag">default=</span><span class="string">'World'</span>)
+<span class="library">@click</span>.<span class="command">option</span>(<span class="flag">'--verbose'</span>, <span class="flag">is_flag</span><span class="parameter">=</span><span class="library">True</span>)
+<span class="function">def</span> <span class="command">hello</span>(name, verbose):
+    <span class="library">if</span> verbose:
+        <span class="comment"># Process request with detailed logging</span>
+        <span class="library">print</span>(<span class="string">f</span><span class="string">"Greeting {name} with detailed logging"</span>)
+    <span class="library">print</span>(<span class="string">f</span><span class="string">"Hello {name}!"</span>)
+
+<span class="library">if</span> __name__ <span class="pointer_operator">==</span> <span class="string">"__main__"</span>:
+    <span class="command">hello</span>()</code></pre>
+    </div>
+
+    <h3>Deployment Instructions</h4>
+    <div class="card">
+ <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+        <span class="command">step 1</span>: <span class="info">git clone https://github.com/scope/the-tool.git</span><div class="card" style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
+                <span class="comment"># Dependency management</span>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <code>cp .env.example .env</code>
+                <code>docker-compose up -d</code>
+                <code>npx prisma migrate deploy</code>
+            </div>
+        </div>
+            <div class="card" style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin: 1rem 0;">
+                <span class="comment"># Run tests</span>
+                <span class="command">npm test</span>
+            </div>
+            <div class="card" style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin: 1rem 0;">
+                <span class="comment"># Deploy</span>
+                <span class="command">npm run deploy</span>
+            </div>
+        </div>
+    </div>
+
+    <h2>Visual System</h2>
+    
+    <h3>Color Palette</h3>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0;">
+        <div style="background: var(--bg); padding: 1rem; border-radius: 8px; text-align: center;">
+            <div style="background: var(--accent); height: 40px; width: 80px; border-radius: 4px; margin-bottom: 0.5rem;"></div>
+            <code>--accent</code> <span style="color: #8b8ba0;">(primary)</span>
+        </div>
+        <div style="background: var(--bg); padding: 1rem; border-radius: 8px; text-align: center;">
+            <div style="background: var(--border); height: 40px; width: 80px; border-radius: 4px; margin-bottom: 0.5rem;"></div>
+            <code>--border</code> <span style="color: #8b8ba0;">(dividers)</span>
+        </div>
+        <div style="background: var(--bg); padding: 1rem; border-radius: 8px; text-align: center;">
+            <div style="background: var(--card); height: 40px; width: 80px; border-radius: 4px; margin-bottom: 0.5rem;"></div>
+            <code>--card</code> <span style="color: #8b8ba0;">(cards)</span>
+        </div>
+    </div>
+
+    <h3>Typography Hierarchy</h3>
+    <table>
+      <thead><tr><th>Element</th><th>Font</th><th>Size</th><th>Weight</th></tr></thead>
+      <tbody>
+        <tr><td><code>h1</code></td><td>Space Grotesk</td><td>2.5rem</td><td>700</td></tr>
+        <tr><td><code>h2</code></td><td>Space Grotesk</td><td>1.5rem</td><td>600</td></tr>
+        <tr><td><code>h3</code></td><td>Space Grotesk</td><td>1.1rem</td><td>600</td></tr>
+        <tr><td><code>Terminal output</code></td><td>JetBrains Mono</td><td>0.85rem</td><td>400</td></tr>
+        <tr><td><code>Inline code</code></td><td>JetBrains Mono</td><td>0.9rem</td><td>400</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Tools & Workflows</h4>
+    
+    <div class="warning-panel">
+      <strong>Current Toolkit:</strong><br>
+      <span class="library">Python 3.12</span> (automation, scraping, scripts), <span class="library">TypeScript/React</span> (dashboards, SPAs), <span class="library">Bash</span> (CLI, deployment, dotfiles), <span class="library">PostgreSQL/SQLite</span> (data storage), <span class="library">Cloudflare</span> (edge deployment), <span class="library">Git</span> (version control)
+    </div>
+
+    <h2>Ready to Collaborate?</h2>
+    <p>Drop me a line at <span style="color: var(--accent);">theinkstained@protonmail.com</span> — I'm always down to dig into archives, write docs, or just chat about the good old days when comix were dangerous.</p>
+
+    <div class="terminal-footer" style="padding: 1rem; background: var(--bg); border-top: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--fg-muted);">
+      <span>style-showcase.html · <code>git push origin main</code></span>
+    </div>
+
+    <script>
+      // Simple hash-based navigation
+      (function() {
+        var hash = window.location.hash.slice(1);
+        if (hash) {
+          var target = document.getElementById(hash.substring(1));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      })();
+    </script>
+  </div>
+</body>
+</html>
