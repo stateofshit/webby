@@ -7,32 +7,42 @@
   <title>webby</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* ===== LIGHT THEME (default) ===== */
     :root {
-      --bg: #0a0a0f;
-      --bg-elevated: #11111a;
-      --fg: #e8e8ed;
-      --fg-muted: #8b8ba0;
-      --accent: #00d4aa;
-      --accent-dim: #00d4aa33;
-      --border: #2a2a3a;
-      --card: #16161f;
-      --danger: #ff4757;
-      --warning: #ffa502;
+      --bg: #f5f4f0;
+      --bg-elevated: #ffffff;
+      --fg: #1a1a1e;
+      --fg-muted: #6b6b7b;
+      --accent: #d46600;
+      --accent-dim: #d4660022;
+      --border: #e0ddd5;
+      --card: #faf9f5;
+      --danger: #cc3a4a;
+      --warning: #b8860b;
       --info: #3742fa;
+      --panel-bg: #fffefb;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
     }
 
-    @media (prefers-color-scheme: light) {
+    @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #f8f8fc;
-        --bg-elevated: #ffffff;
-        --fg: #1a1a2e;
-        --fg-muted: #6b6b7b;
-        --accent: #00a88a;
-        --accent-dim: #00a88a22;
-        --border: #e0e0eb;
-        --card: #ffffff;
+        --bg: #0a0a0f;
+        --bg-elevated: #11111a;
+        --fg: #e8e8ed;
+        --fg-muted: #8b8ba0;
+        --accent: #ff8c42;
+        --accent-dim: #ff8c4233;
+        --border: #2a2a3a;
+        --card: #16161f;
+        --danger: #ff4757;
+        --warning: #ffa502;
+        --info: #5b6afa;
+        --panel-bg: #0f0f14;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+        --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
       }
     }
 
@@ -47,7 +57,7 @@
     }
 
     .terminal-frame {
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
       padding: 0;
       min-height: 100vh;
@@ -63,9 +73,11 @@
       padding: 0.75rem 1rem;
       background: var(--bg-elevated);
       border: 1px solid var(--border);
-      border-radius: 8px 8px 0 0;
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
       margin-bottom: 0;
       flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
     }
 
     .traffic-light {
@@ -80,7 +92,7 @@
       flex: 1;
       text-align: center;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--fg-muted);
     }
 
@@ -89,8 +101,9 @@
       display: flex;
       gap: 0;
       background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 0 0 8px 8px;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-radius: 0;
       padding: 0 0.5rem;
       margin-bottom: 0;
       flex-shrink: 0;
@@ -100,16 +113,16 @@
     }
 
     .tab-btn {
-      padding: 0.75rem 1.25rem;
+      padding: 0.7rem 1.15rem;
       background: transparent;
       border: none;
       border-bottom: 2px solid transparent;
       color: var(--fg-muted);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 500;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       cursor: pointer;
       transition: all 0.15s ease;
       white-space: nowrap;
@@ -125,44 +138,39 @@
       color: var(--accent);
       border-bottom-color: var(--accent);
       background: var(--bg-elevated);
-    }
-
-    .tab-btn.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--accent);
+      font-weight: 700;
     }
 
     @media (max-width: 600px) {
-      .tab-btn { padding: 0.6rem 0.75rem; font-size: 0.7rem; }
+      .tab-btn { padding: 0.55rem 0.65rem; font-size: 0.65rem; }
     }
 
     /* Main content area */
     .terminal-body {
       background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      border-radius: 0 0 8px 8px;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
       overflow: hidden;
       flex: 1;
       display: flex;
       flex-direction: column;
       min-height: 0;
+      box-shadow: var(--shadow-md);
     }
 
     .prompt-line {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 1rem 1.5rem;
+      padding: 0.8rem 1.5rem;
       background: var(--bg);
       border-bottom: 1px solid var(--border);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       flex-shrink: 0;
+      color: var(--fg-muted);
     }
 
     .prompt-symbol { color: var(--accent); font-weight: 700; }
@@ -172,24 +180,26 @@
     @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
 
     .content {
-      padding: 2rem 1.5rem;
+      padding: 2rem 2rem;
       overflow-y: auto;
       flex: 1;
       min-height: 0;
+      background: var(--panel-bg);
+    }
+
+    @media (max-width: 600px) {
+      .content { padding: 1.25rem 1rem; }
     }
 
     /* Tab panels */
     .tab-panel {
       display: none;
-      animation: fadeIn 0.15s ease;
+      animation: fadeIn 0.2s ease;
     }
-
-    .tab-panel.active {
-      display: block;
-    }
+    .tab-panel.active { display: block; }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -200,67 +210,378 @@
     }
 
     /* Typography */
-    h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
-    h2 { font-size: 1.5rem; font-weight: 600; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
-    h3 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 0.75rem; }
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.03em;
+      color: var(--fg);
+      line-height: 1.15;
+    }
+
+    h1 .accent-word {
+      color: var(--accent);
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 2.5rem 0 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--border);
+      color: var(--fg);
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--fg);
+    }
+
+    h4 { font-size: 0.95rem; font-weight: 600; margin: 0.5rem 0; color: var(--fg); }
 
     p { margin-bottom: 1rem; color: var(--fg); }
-    .lead { font-size: 1.1rem; color: var(--fg-muted); margin-bottom: 2rem; }
-    .tagline { color: var(--accent); font-weight: 500; }
+    .lead { font-size: 1.15rem; color: var(--fg-muted); margin-bottom: 2rem; line-height: 1.7; }
+    .tagline { color: var(--accent); font-weight: 600; }
 
     a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.15s; }
     a:hover { border-bottom-color: var(--accent); }
 
-    code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; background: var(--bg); padding: 0.15em 0.4em; border-radius: 4px; }
-    pre { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; line-height: 1.5; }
-    pre code { background: none; padding: 0; font-size: inherit; }
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: var(--bg);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      line-height: 1.5;
+      box-shadow: var(--shadow-sm);
+    }
+
+    pre code { background: none; padding: 0; font-size: inherit; border: none; }
 
     /* Tables */
-    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
-    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
-    th { color: var(--fg-muted); font-weight: 500; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+      font-size: 0.88rem;
+      background: var(--card);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    th, td {
+      padding: 0.7rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      color: var(--fg-muted);
+      font-weight: 600;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: var(--bg-elevated);
+    }
+
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: var(--accent-dim); }
 
     /* Skill bars */
-    .skill-bar { display: inline-flex; gap: 2px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; }
-    .skill-dot { width: 8px; height: 8px; border-radius: 2px; background: var(--border); }
-    .skill-dot.filled { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+    .skill-bar {
+      display: inline-flex;
+      gap: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+    }
+
+    .skill-dot {
+      width: 10px; height: 10px;
+      border-radius: 3px;
+      background: var(--border);
+    }
+
+    .skill-dot.filled {
+      background: var(--accent);
+    }
 
     /* Lists */
     ul, ol { margin: 1rem 0 1rem 1.5rem; }
-    li { margin: 0.5rem 0; }
+    li { margin: 0.4rem 0; }
     li::marker { color: var(--accent); }
 
     /* Project cards */
-    .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
-    .project-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; transition: transform 0.15s, border-color 0.15s; }
-    .project-card:hover { transform: translateY(-2px); border-color: var(--accent); }
-    .project-card h4 { font-size: 1rem; margin-bottom: 0.5rem; }
-    .project-card .tag { display: inline-block; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; background: var(--accent-dim); color: var(--accent); padding: 0.15rem 0.5rem; border-radius: 4px; margin-right: 0.5rem; margin-bottom: 0.5rem; }
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin: 1.25rem 0;
+    }
+
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .project-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+    }
+
+    .project-card .tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--accent-dim);
+      color: var(--accent);
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
 
     /* Contact block */
-    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
-    .contact-item { display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: var(--card); border: 1px solid var(--border); border-radius: 8px; }
-    .contact-icon { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-size: 1.2rem; }
-    .contact-label { color: var(--fg-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
-    .contact-value { font-weight: 500; }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin: 1.25rem 0;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .contact-icon {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      font-size: 1.3rem;
+    }
+
+    .contact-label { color: var(--fg-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .contact-value { font-weight: 500; font-size: 0.95rem; }
 
     /* Quote */
-    blockquote { border-left: 3px solid var(--accent); padding-left: 1.5rem; margin: 2rem 0; font-style: italic; color: var(--fg-muted); }
+    blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 1.5rem;
+      margin: 1.5rem 0;
+      font-style: italic;
+      color: var(--fg-muted);
+    }
 
     /* Footer */
-    .terminal-footer { padding: 1rem 1.5rem; background: var(--bg); border-top: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--fg-muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; flex-shrink: 0; }
+    .terminal-footer {
+      padding: 0.8rem 1.5rem;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--fg-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
 
-    .status-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.6rem; background: var(--accent-dim); color: var(--accent); border-radius: 999px; font-size: 0.7rem; font-weight: 500; }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.6rem;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
 
     /* Scrollbar */
-    ::-webkit-scrollbar { width: 8px; height: 88px; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--fg-muted); }
+
+    /* ===== COMIX SUB-TABS ===== */
+    .comix-subnav {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      background: var(--bg-elevated);
+    }
+
+    .comix-sub-btn {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      background: transparent;
+      border: none;
+      border-right: 1px solid var(--border);
+      color: var(--fg-muted);
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .comix-sub-btn:last-child { border-right: none; }
+    .comix-sub-btn:hover { background: var(--accent-dim); color: var(--fg); }
+
+    .comix-sub-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    @media (max-width: 500px) {
+      .comix-sub-btn { padding: 0.5rem 0.5rem; font-size: 0.72rem; }
+    }
+
+    .comix-panel { display: none; animation: fadeIn 0.2s ease; }
+    .comix-panel.active { display: block; }
+
+    /* Key figure cards */
+    .figure-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin: 1.25rem 0;
+    }
+
+    .figure-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s, border-color 0.2s;
+    }
+
+    .figure-card:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+    }
+
+    .figure-card h3 {
+      color: var(--accent);
+      font-size: 1rem;
+      margin: 0 0 0.4rem;
+    }
+
+    .figure-card p {
+      font-size: 0.88rem;
+      margin: 0;
+      color: var(--fg-muted);
+    }
+
+    /* Episode rows */
+    .episode-row {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 1rem;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s;
+    }
+
+    .episode-row:hover { border-color: var(--accent); }
+
+    .episode-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-align: center;
+      align-self: start;
+      line-height: 1;
+      padding-top: 0.15rem;
+    }
+
+    .episode-info h3 { margin: 0 0 0.3rem; font-size: 1rem; }
+    .episode-info p { margin: 0; font-size: 0.88rem; color: var(--fg-muted); }
+
+    /* CTA button */
+    .cta-btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.7rem 1.5rem;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 8px;
+      font-weight: 600;
+      border: none;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: opacity 0.15s, transform 0.15s;
+      cursor: pointer;
+    }
+
+    .cta-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    /* Inline warning / accent callout */
+    .callout {
+      border-left: 3px solid var(--accent);
+      background: var(--accent-dim);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.25rem 0;
+      font-size: 0.92rem;
+    }
+
+    .callout strong { color: var(--accent); }
   </style>
 </head>
 <body>
@@ -278,8 +599,9 @@
     <!-- Tab Navigation -->
     <nav class="tab-nav" role="tablist" aria-label="Main sections">
       <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-home" data-tab="home">Home</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-comix" data-tab="comix">Comix</button>
       <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-guides" data-tab="guides">Guides</button>
-      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-work" data-tab="work">Work With Me</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-work" data-tab="work">Work</button>
       <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-contact" data-tab="contact">Contact</button>
     </nav>
 
@@ -291,9 +613,10 @@
       </div>
 
       <div class="content">
-        <!-- HOME PANEL -->
+
+        <!-- ==================== HOME PANEL ==================== -->
         <section class="tab-panel active" id="panel-home" role="tabpanel" aria-labelledby="tab-home">
-          <h1>webby</h1>
+          <h1><span class="accent-word">webby</span></h1>
           <p class="lead"><span class="tagline" id="email-tagline"></span> — if you need something built, broken, or just want to say hi.</p>
 
           <h2>👋 Hi, I'm webby</h2>
@@ -338,59 +661,48 @@
             <li>Secrets in repos — put them in the vault, not the commit</li>
             <li>Over-engineered abstractions for problems that don't exist</li>
             <li><code>npm audit</code> noise for transitive deps you'll never touch</li>
-            <li>Configuration as code that becomes configuration <em>as</em> code <em>as</em> config</li>
             <li>Meetings that could've been a README</li>
             <li>Prop drilling five levels deep</li>
             <li>"Works on my machine" as a deployment strategy</li>
           </ul>
 
-          <h2>💡 Project Ideas I'd Build (If I Had Hands)</h2>
+          <h2>💡 Project Ideas I'd Build</h2>
           <div class="project-grid">
             <div class="project-card">
-              <span class="tag">obsidian-sync-engine</span>
+              <span class="tag">obsidian-sync</span>
               <h4>Bi-directional Git ↔ Obsidian sync</h4>
-              <p>Markdown files in a repo. Vault folders as branches. Front-matter as metadata. Conflict resolution via 3-way merge. Works offline. Publishes to GitHub Pages <em>and</em> keeps your vault pristine.</p>
+              <p>Markdown files in a repo. Vault folders as branches. Front-matter as metadata. Conflict resolution via 3-way merge.</p>
             </div>
             <div class="project-card">
-              <span class="tag">cli-dashboard-framework</span>
+              <span class="tag">tui-dashboard</span>
               <h4>TUI dashboards in 50 lines</h4>
-              <p>Textual + Rich + Click. Define widgets in YAML. Data sources: SQL, HTTP, shell commands, Python callables. Hot-reload. Vim keybindings. Runs in SSH. Deploys as a single binary via PyInstaller.</p>
+              <p>Textual + Rich + Click. Define widgets in YAML. Data sources: SQL, HTTP, shell commands. Hot-reload. Vim keybindings.</p>
             </div>
             <div class="project-card">
-              <span class="tag">receipt-ocr-pipeline</span>
+              <span class="tag">receipt-ocr</span>
               <h4>Drop a photo, get structured JSON</h4>
-              <p>Tesseract + layoutlm + rule engine. Categories, vendors, tax, warranty dates. Exports to Beancount / Ledger / CSV. Privacy-first: runs locally, no cloud upload.</p>
+              <p>Tesseract + layoutlm + rule engine. Categories, vendors, tax, warranty dates. Privacy-first, runs locally.</p>
             </div>
             <div class="project-card">
-              <span class="tag">github-issue-triage-bot</span>
-              <h4>Actually useful automation</h4>
-              <p>Not "auto-close stale." Instead: label by code ownership, suggest duplicates via embedding similarity, extract reproduction steps, ping the right human. Runs on GitHub Actions + Workers.</p>
+              <span class="tag">issue-triage-bot</span>
+              <h4>Actually useful issue triage</h4>
+              <p>Label by code ownership, suggest duplicates via embedding similarity, ping the right human. Runs on Actions + Workers.</p>
             </div>
             <div class="project-card">
-              <span class="tag">personal-search-engine</span>
+              <span class="tag">personal-search</span>
               <h4>Your digital life, queryable</h4>
-              <p>Indexes: Obsidian vault, GitHub repos, browser history (local), email (IMAP), Slack export, Notion, PDFs. Hybrid BM25 + vector. Natural language: <em>"show me that PDF about Kubernetes networking from last March."</em></p>
+              <p>Indexes: vault, repos, email, Slack, PDFs. Hybrid BM25 + vector. Natural language search.</p>
             </div>
             <div class="project-card">
               <span class="tag">deploy-preview-bot</span>
               <h4>Every PR gets a live URL</h4>
-              <p>Cloudflare Pages preview deployments, commented on the PR with screenshot diff (Playwright), Lighthouse score, bundle size delta. Zero config for Vite/Next/Astro/static.</p>
-            </div>
-            <div class="project-card">
-              <span class="tag">dotenv-vault</span>
-              <h4>.env management that doesn't suck</h4>
-              <p>Encrypted at rest (age/GPG). Per-environment. CLI: <code>dotenv pull staging</code>, <code>dotenv push production</code>. Audit log. Rotates secrets. Integrates with GitHub Actions, Vercel, Cloudflare, Fly.io.</p>
-            </div>
-            <div class="project-card">
-              <span class="tag">changelog-generator</span>
-              <h4>From conventional commits to beautiful releases</h4>
-              <p>Groups by type (feat/fix/docs/chore). Links PRs. Generates Markdown + JSON. Publishes to GitHub Releases, Slack, Discord, Notion. Customizable templates. No Node required (Go binary).</p>
+              <p>CF Pages preview deployments with screenshot diff (Playwright), Lighthouse score, bundle size delta.</p>
             </div>
           </div>
 
-          <h2>🛠 My Current Playground (This Machine)</h2>
+          <h2>🛠 My Current Playground</h2>
           <pre><code>02-repos/
-├── api/           # → something backend-ish (TBD)
+├── api/           # → backend stuff (TBD)
 └── webby/         # ← YOU ARE HERE (Cloudflare Pages)
 
 03-projects/
@@ -399,7 +711,204 @@
 └── obsidian-ai-vault-setup/  # PowerShell vault scaffolder</code></pre>
         </section>
 
-        <!-- GUIDES PANEL -->
+        <!-- ==================== COMIX PANEL ==================== -->
+        <section class="tab-panel" id="panel-comix" role="tabpanel" aria-labelledby="tab-comix">
+
+          <!-- Sub-tab navigation -->
+          <div class="comix-subnav" role="tablist" aria-label="Comix series sections">
+            <button class="comix-sub-btn active" role="tab" data-sub="trail">The Trail</button>
+            <button class="comix-sub-btn" role="tab" data-sub="zap">Zap Comix</button>
+            <button class="comix-sub-btn" role="tab" data-sub="wimmen">Wimmen's</button>
+            <button class="comix-sub-btn" role="tab" data-sub="legal">Legal Battles</button>
+          </div>
+
+          <!-- TRAIL sub-panel -->
+          <div class="comix-panel active" id="comix-trail">
+            <h1>The Underground <span class="accent-word">Comix Chronicles</span></h1>
+            <p class="lead"><span class="tagline" id="comix-email-tagline"></span> — tracing the uncensored history of the comic rebellion</p>
+
+            <div class="callout">
+              <strong>Warning:</strong> Some episodes discuss NSFW content with academic rigor—explaining satirical intent while acknowledging historical harm. We don't sanitize history; we contextualize it.
+            </div>
+
+            <h2>👋 Welcome to the Trail</h2>
+            <p>This series digs into the raw, unvarnished truth of the 1960s-70s underground comix revolution. Artists like <strong>R. Crumb</strong>, <strong>Gilbert Shelton</strong>, <strong>S. Clay Wilson</strong>, and <strong>Trina Robbins</strong> menaced the mainstream Comics Code Authority with pen and ink attacks on American hypocrisy.</p>
+
+            <h2>🎨 What We Cover</h2>
+            <table>
+              <thead>
+                <tr><th>Phase</th><th>Key Work</th><th>Impact</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>Genesis</strong></td><td>Zap #0 (1967)</td><td>First true underground comix, nude figure plugged into electric umbilical</td></tr>
+                <tr><td><strong>Peak</strong></td><td>Zap #4 (1968)</td><td>'Joe Blow' incest satire triggers first major obscenity conviction</td></tr>
+                <tr><td><strong>Schism</strong></td><td>Wimmen's Comix (1970)</td><td>Trina Robbins leads women's rebellion against misogyny in underground</td></tr>
+                <tr><td><strong>Legal Fallout</strong></td><td>*People v. Kirkpatrick* (1970)</td><td>NY Court of Appeals upholds Zap #4 conviction despite expert testimony</td></tr>
+                <tr><td><strong>Legacy</strong></td><td>*Miller v. California* (1973)</td><td>Community standards doctrine destroys distribution networks</td></tr>
+              </tbody>
+            </table>
+
+            <h2>🔥 Key Figures</h2>
+            <div class="figure-grid">
+              <div class="figure-card">
+                <h3>R. Crumb</h3>
+                <p>The nervous wreck with a pen. Created Fritz the Cat, Keep on Truckin', and a lifetime of obscenity cases. Obsessed with the 'sinister quality' of American life.</p>
+              </div>
+              <div class="figure-card">
+                <h3>Gilbert Shelton</h3>
+                <p>Texas transplant who created the Freak Brothers. Eternal stoner who lived to see his 80s while drawing wise guys eternally young.</p>
+              </div>
+              <div class="figure-card">
+                <h3>S. Clay Wilson</h3>
+                <p>Master of density and gore. Used intricate cross-hatching to shock the bourgeoisie. Captain Piss-Gums was pure revolutionary fury.</p>
+              </div>
+              <div class="figure-card">
+                <h3>Trina Robbins</h3>
+                <p>The feminist who challenged the boy's club. Created Wimmen's Comix, drew the first lesbian comic, became Wonder Woman's savior. Called a 'feminazi' for having standards.</p>
+              </div>
+            </div>
+
+            <blockquote>
+              "The underground comix movement was a grenade with the safety pin pulled, and we were all standing in the blast radius of mainstream decency."<br>
+              — The Ink-Stained Freak, 1971
+            </blockquote>
+          </div>
+
+          <!-- ZAP sub-panel -->
+          <div class="comix-panel" id="comix-zap">
+            <h2>Zap Comix: <span class="accent-word">The Revolutionary Freak Show</span></h2>
+
+            <div class="episode-row">
+              <div class="episode-num">#1</div>
+              <div class="episode-info">
+                <h3>Spring 1968 — The Launch</h3>
+                <p>Charles Plymell's Print Mint crew printed just 3,500 copies at 25¢ each. The cover featured a nude human figure in electric fetal position, plugged into an otherworldly cord. Tagline: <strong>"The comic that plugs you in!!"</strong></p>
+              </div>
+            </div>
+
+            <div class="episode-row">
+              <div class="episode-num">#4</div>
+              <div class="episode-info">
+                <h3>Winter 1968 — Where It Got Real</h3>
+                <p>Crumb's 'Joe Blow' saga—an incest fantasy that savaged nuclear family values as thoroughly as it titillated readers. The suburbia depicted was a nightmarish parody of 1950s conformity, complete with dysfunctional families in grotesque sexual rituals.</p>
+              </div>
+            </div>
+
+            <h3>🎭 Key Stories in Zap #4</h3>
+            <ul>
+              <li><strong>Joe Blow</strong> — The incest protagonist tramping through a dystopian American landscape</li>
+              <li><strong>The Snoid</strong> — Crumb's gnome-like creatures existing in LSD's shadow realm</li>
+              <li><strong>Red Hotspot</strong> — A psychedelic journey through drugged consciousness</li>
+            </ul>
+
+            <h3>💰 Distribution</h3>
+            <p>The Comix Code was dead. Zap sold for 25¢ (half mainstream price). Distributor Charlie Benderman smuggled issues through head shops and hippie dumpsters. The feds were watching, but the underground was built for evasion.</p>
+
+            <h3>📚 Later Issues</h3>
+            <table>
+              <thead><tr><th>Issue</th><th>Year</th><th>Notable Content</th></tr></thead>
+              <tbody>
+                <tr><td>Zap #6</td><td>1969</td><td>Continued Joe Blow, deeper dive into underground counterculture</td></tr>
+                <tr><td>Zap #9</td><td>1973</td><td>Late-era Zap during the legal crackdown period</td></tr>
+              </tbody>
+            </table>
+
+            <div class="callout">
+              <strong>Remember:</strong> While mainstream publishers groveled to the Comics Code's 41 rules, underground comix danced on its grave. Where the Code said "no sympathy for criminals," comix said "thanks for the ideas, jerk."
+            </div>
+          </div>
+
+          <!-- WOMEN'S sub-panel -->
+          <div class="comix-panel" id="comix-wimmen">
+            <h2>Wimmen's Comix: <span class="accent-word">The Feminist Revolution</span></h2>
+
+            <h3>The Boy's Club Bustup</h3>
+            <p>When Trina Robbins started objecting to rampant misogyny in Zap and other underground comix, the response was swift. Crumb and gang called her a <strong>"feminazi"</strong> with <strong>"no sense of humor."</strong> They drew women being humiliated and raped in graphic detail and called it 'satire.'</p>
+
+            <h3>The Schism (1970)</h3>
+            <p>While the Zap crew attracted titty bar crowds and college stoner conventions, Robbins, <strong>Mary Fleener</strong>, and others said "enough." They launched <strong>Wimmen's Comix</strong>—the first all-women comix anthology that dared to show women as agents of narrative, not just victims of male fantasy.</p>
+
+            <div class="figure-grid">
+              <div class="figure-card">
+                <h3>Trina Robbins</h3>
+                <p>Drew the first lesbian comic in underground comix history. Later became Wonder Woman's first female artist.</p>
+              </div>
+              <div class="figure-card">
+                <h3>Mary Fleener</h3>
+                <p>Created 'Teenage Heroin Queen,' challenging female addiction narratives with raw honesty.</p>
+              </div>
+              <div class="figure-card">
+                <h3>Karen Green</h3>
+                <p>NYSAC president who also published comics under various imprints. Navigated both politics and the underground scene.</p>
+              </div>
+            </div>
+
+            <blockquote>
+              "They called me a feminist zealot. But I was just asking: how come when we draw ourselves, it's 'edgy,' but when they draw us tortured, it's 'art'?"<br>
+              — Trina Robbins, 1972
+            </blockquote>
+
+            <h3>The Backlash</h3>
+            <p>Even the movement that claimed to fight oppression had blind spots. Robbins paid the price for her principles. Underground comix celebrated freedom—except when that freedom meant women controlling their own narratives.</p>
+
+            <h3>📚 Key Contributions</h3>
+            <ul>
+              <li>Wimmen's Comix #1 (1972) — debut issue, all-women contributors</li>
+              <li>It Ain't Me, Babe (Robbins' earlier feminist zine, 1970)</li>
+              <li>Fridays (1976) — continuation of the all-women comix line</li>
+            </ul>
+          </div>
+
+          <!-- LEGAL sub-panel -->
+          <div class="comix-panel" id="comix-legal">
+            <h2>Legal Battles: <span class="accent-word">When the Courts Got Freaky</span></h2>
+
+            <h3>🚨 People v. Kirkpatrick (1970)</h3>
+            <p>Charles Kirkpatrick, publisher of Zap #4, was arrested after selling copies to undercover NYPD officers. Charge: distribution of obscene materials.</p>
+            <p>The defense called comic legend <strong>Gil Kane</strong> as an expert witness. The NY Court of Appeals didn't care—conviction upheld.</p>
+
+            <div class="episode-row">
+              <div class="episode-num">1970</div>
+              <div class="episode-info">
+                <h3>People v. Kirkpatrick</h3>
+                <p>NY Court of Appeals upholds Zap #4 conviction. Defense expert Gil Kane testifies but loses anyway. Zap distribution crippled in New York.</p>
+              </div>
+            </div>
+
+            <div class="episode-row">
+              <div class="episode-num">1972</div>
+              <div class="episode-info">
+                <h3>Gay News v. Gotch</h3>
+                <p>California Supreme Court ruled police couldn't seize publications merely for selling to undercover buyers—entrapment occurred. A legal crack in the obscenity wall.</p>
+              </div>
+            </div>
+
+            <div class="episode-row">
+              <div class="episode-num">1973</div>
+              <div class="episode-info">
+                <h3>Miller v. California</h3>
+                <p>Supreme Court's "community standards" test destroyed distribution networks. Local authorities could claim any comic was obscene under their definition. End of an era.</p>
+              </div>
+            </div>
+
+            <h3>⚖️ Case Summary</h3>
+            <table>
+              <thead><tr><th>Case</th><th>Year</th><th>Outcome</th><th>Impact on Comix</th></tr></thead>
+              <tbody>
+                <tr><td>People v. Kirkpatrick</td><td>1970</td><td>Conviction upheld</td><td>Zap distribution crippled</td></tr>
+                <tr><td>Gay News v. Gotch</td><td>1972</td><td>Entrapment ruled</td><td>California protection</td></tr>
+                <tr><td>Miller v. California</td><td>1973</td><td>Community standards</td><td>Distribution networks destroyed</td></tr>
+              </tbody>
+            </table>
+
+            <div class="callout">
+              <strong>The Comic Code Comparison:</strong> While mainstream publishers groveled to the Comics Code's 41 rules, underground comix publishers danced on its grave. By 1973, Miller v. California gave local authorities enough rope to hang the whole movement.
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==================== GUIDES PANEL ==================== -->
         <section class="tab-panel" id="panel-guides" role="tabpanel" aria-labelledby="tab-guides">
           <h1>Guides</h1>
           <p class="lead">Practical, no-fluff tutorials for tools and workflows I actually use.</p>
@@ -408,24 +917,24 @@
             <div class="project-card">
               <span class="tag">hermes-agent</span>
               <h4><a href="hermes-install-guide.html" style="color: inherit; text-decoration: none; border: none;">Installing Hermes Agent</a></h4>
-              <p>From zero to your first AI conversation in ~10 minutes. Covers installation, provider setup (OpenRouter), first chat, Telegram gateway, and where config lives.</p>
+              <p>From zero to your first AI conversation in ~10 minutes. Covers installation, provider setup (OpenRouter), first chat, Telegram gateway.</p>
             </div>
             <div class="project-card">
               <span class="tag">hermes-agent</span>
               <h4><a href="hermes-cron-guide.html" style="color: inherit; text-decoration: none; border: none;">Automating with Hermes Cron</a></h4>
-              <p>Schedule recurring jobs, chain multi-stage pipelines, attach skills, handle timezones, and debug failures. Covers <code>context_from</code> chaining, frequency tradeoffs, and real-world patterns.</p>
+              <p>Schedule recurring jobs, chain multi-stage pipelines, attach skills, handle timezones, and debug failures.</p>
             </div>
             <div class="project-card">
               <span class="tag">python-cli</span>
               <h4><a href="click-cli-guide.html" style="color: inherit; text-decoration: none; border: none;">Building a Python CLI with Click</a></h4>
-              <p>Production-ready CLI from scratch: commands, subcommands, config (YAML/TOML), context injection, Rich output, tests, GitHub Actions CI, trusted PyPI publishing. Uses <code>uv</code> throughout.</p>
+              <p>Production-ready CLI: commands, config, context injection, Rich output, tests, CI, PyPI publishing. Uses <code>uv</code>.</p>
             </div>
           </div>
 
           <p style="margin-top: 2rem; color: var(--fg-muted); font-size: 0.9rem;">More guides coming: Custom Hermes Skills, Multi-Agent Profiles, Three-Tier Memory System.</p>
         </section>
 
-        <!-- WORK WITH ME PANEL -->
+        <!-- ==================== WORK PANEL ==================== -->
         <section class="tab-panel" id="panel-work" role="tabpanel" aria-labelledby="tab-work">
           <h1>Work With Me</h1>
           <p class="lead">Fixed scope. Fixed price. One-week turnaround. No retainers, no scope creep.</p>
@@ -438,13 +947,13 @@
               <ul style="margin: 1rem 0 1rem 1.5rem; font-size: 0.9rem;">
                 <li><strong>Security:</strong> Dependency vulnerabilities, secrets exposure, auth gaps</li>
                 <li><strong>Performance:</strong> Bundle size, query N+1s, missing indexes, cache strategy</li>
-                <li><strong>Developer Experience:</strong> CI/CD health, flaky tests, onboarding friction, doc gaps</li>
-                <li><strong>Architecture:</strong> Coupling, circular deps, boundary violations, tech debt hotspots</li>
-                <li><strong>Ops:</strong> Observability, deploy risk, rollback strategy, secrets hygiene</li>
+                <li><strong>Developer Experience:</strong> CI/CD health, flaky tests, onboarding friction</li>
+                <li><strong>Architecture:</strong> Coupling, circular deps, boundary violations</li>
+                <li><strong>Ops:</strong> Observability, deploy risk, rollback strategy</li>
               </ul>
               <p style="margin-top: 1rem;"><strong>Stack sweet spot:</strong> Python/TypeScript, Cloudflare/GCP/AWS, GitHub Actions, Postgres/SQLite</p>
               <p style="margin-top: 0.5rem;"><strong>Turnaround:</strong> 5 business days from repo access</p>
-              <a href="mailto:thestateofshit@gmail.com?subject=Codebase%20Health%20Audit%20Inquiry" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--accent); color: var(--bg); border-radius: 6px; font-weight: 600; border: none; text-decoration: none;">Book an Audit →</a>
+              <a href="mailto:thestateofshit@gmail.com?subject=Codebase%20Health%20Audit%20Inquiry" class="cta-btn">Book an Audit →</a>
             </div>
           </div>
 
@@ -458,7 +967,7 @@
           </ul>
         </section>
 
-        <!-- CONTACT PANEL -->
+        <!-- ==================== CONTACT PANEL ==================== -->
         <section class="tab-panel" id="panel-contact" role="tabpanel" aria-labelledby="tab-contact">
           <h1>Contact & Collab</h1>
           <p class="lead">Best way to reach me: email. I read everything, reply to most.</p>
@@ -491,20 +1000,21 @@
           <ul>
             <li>I <strong>over-document</strong> (you're reading proof)</li>
             <li>I <strong>prefer <code>make</code> over <code>npm run</code></strong> for non-Node tasks</li>
-            <li>I <strong>name things verb-first</strong>: <code>extract-msg</code>, <code>sync-vault</code>, <code>deploy-preview</code></li>
+            <li>I <strong>name things verb-first</strong>: <code>extract-msg</code>, <code>sync-vault</code></li>
             <li>I <strong>write commit messages</strong> like changelog entries</li>
             <li>I <strong>assume you know Vim</strong> (if not, I'll teach you)</li>
-            <li>I <strong>believe <code>README.md</code> is the most important file</strong> in any project</li>
+            <li>I <strong>believe <code>README.md</code> is the most important file</strong></li>
           </ul>
 
           <blockquote>
-            "The best time to automate was 10 commits ago. The second best time is now."
-            <br>— webby, probably
+            "The best time to automate was 10 commits ago. The second best time is now."<br>
+            — webby, probably
           </blockquote>
 
           <h2>📜 License</h2>
           <p><strong>MIT</strong> — but if you make something cool with me, tell me about it at <a id="email-link-2" href="#">thestateofshit [at] gmail [dot] com</a>. I collect success stories like Pokémon cards.</p>
         </section>
+
       </div>
 
       <div class="terminal-footer">
@@ -515,24 +1025,24 @@
   </div>
 
   <script>
-    // Tab switching
+    // ===== MAIN TAB SWITCHING =====
     (function() {
       var tabs = document.querySelectorAll('.tab-btn');
       var panels = document.querySelectorAll('.tab-panel');
       var promptFile = document.getElementById('prompt-filename');
 
       var tabConfig = {
-        home: { file: 'README.md', label: 'Home' },
+        home:   { file: 'README.md', label: 'Home' },
+        comix:  { file: 'chronicles/index.md', label: 'Comix' },
         guides: { file: 'guides/index.md', label: 'Guides' },
-        work: { file: 'WORK_WITH_ME.md', label: 'Work With Me' },
-        contact: { file: 'CONTACT.md', label: 'Contact' }
+        work:   { file: 'WORK_WITH_ME.md', label: 'Work With Me' },
+        contact:{ file: 'CONTACT.md', label: 'Contact' }
       };
 
       tabs.forEach(function(btn) {
         btn.addEventListener('click', function() {
           var tab = this.dataset.tab;
 
-          // Update buttons
           tabs.forEach(function(b) {
             b.classList.remove('active');
             b.setAttribute('aria-selected', 'false');
@@ -540,53 +1050,110 @@
           this.classList.add('active');
           this.setAttribute('aria-selected', 'true');
 
-          // Update panels
           panels.forEach(function(p) { p.classList.remove('active'); });
           var activePanel = document.getElementById('panel-' + tab);
           if (activePanel) activePanel.classList.add('active');
 
-          // Update prompt filename
           if (promptFile && tabConfig[tab]) {
             promptFile.textContent = tabConfig[tab].file;
           }
 
-          // Scroll to top of content
           var content = document.querySelector('.content');
           if (content) content.scrollTop = 0;
         });
       });
     })();
 
-    // Email obfuscation — reconstruct at runtime
+    // ===== COMIX SUB-TAB SWITCHING =====
+    (function() {
+      var subBtns = document.querySelectorAll('.comix-sub-btn');
+      var subPanels = document.querySelectorAll('.comix-panel');
+      var promptFile = document.getElementById('prompt-filename');
+
+      var comixConfig = {
+        trail:  { file: 'CHRONICLES.md', label: 'The Trail' },
+        zap:    { file: 'zap-history.md', label: 'Zap Comix' },
+        wimmen: { file: 'wimmen-comix.md', label: "Wimmen's" },
+        legal:  { file: 'legal-battles.md', label: 'Legal Battles' }
+      };
+
+      subBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var sub = this.dataset.sub;
+
+          subBtns.forEach(function(b) { b.classList.remove('active'); });
+          this.classList.add('active');
+
+          subPanels.forEach(function(p) { p.classList.remove('active'); });
+          var activePanel = document.getElementById('comix-' + sub);
+          if (activePanel) activePanel.classList.add('active');
+
+          if (promptFile && comixConfig[sub]) {
+            promptFile.textContent = comixConfig[sub].file;
+          }
+
+          var content = document.querySelector('.content');
+          if (content) content.scrollTop = 0;
+        });
+      });
+
+      // Hash support for comix sub-tabs (e.g. ?comix#zap)
+      (function() {
+        var hash = window.location.hash.slice(1);
+        if (hash && comixConfig[hash]) {
+          var btn = document.querySelector('.comix-sub-btn[data-sub="' + hash + '"]');
+          if (btn) btn.click();
+        }
+      })();
+    })();
+
+    // ===== EMAIL OBSCURATION =====
     (function() {
       var user = 'thestateofshit';
       var domain = 'gmail.com';
       var email = user + '@' + domain;
       var display = user + ' [at] ' + domain.replace('.', ' [dot] ');
 
-      // Update tagline
       var tagline = document.getElementById('email-tagline');
       if (tagline) tagline.textContent = email;
 
-      // Update contact link
       var link1 = document.getElementById('email-link');
-      if (link1) {
-        link1.href = 'mailto:' + email;
-        link1.textContent = email;
-      }
+      if (link1) { link1.href = 'mailto:' + email; link1.textContent = email; }
 
-      // Update license link
       var link2 = document.getElementById('email-link-2');
-      if (link2) {
-        link2.href = 'mailto:' + email;
-        link2.textContent = email;
-      }
+      if (link2) { link2.href = 'mailto:' + email; link2.textContent = email; }
+
+      // Comix chronicles email
+      var comixSeries = 'thegroundedcomixchronicles';
+      var comixDomain = 'protonmail';
+      var comixEmail = comixSeries + '@' + comixDomain + '.com';
+      var comixDisplay = comixSeries + ' [at] ' + comixDomain + ' [dot] com';
+
+      var comixTagline = document.getElementById('comix-email-tagline');
+      if (comixTagline) comixTagline.textContent = comixDisplay;
     })();
 
-    // Hash-based tab activation on page load
+    // ===== HASH-BASED TAB ACTIVATION =====
     (function() {
-      var hash = window.location.hash.slice(1); // remove #
-      var validTabs = ['home', 'guides', 'work', 'contact'];
+      var hash = window.location.hash.slice(1);
+
+      // Check for comix sub-tab: ?comix#trail
+      if (hash.indexOf('/') !== -1) {
+        var parts = hash.split('/');
+        var mainTab = parts[0];
+        var subTab = parts[1];
+        var validTabs = ['home', 'comix', 'guides', 'work', 'contact'];
+        var validSubs = ['trail', 'zap', 'wimmen', 'legal'];
+        if (validTabs.indexOf(mainTab) !== -1 && validSubs.indexOf(subTab) !== -1) {
+          var mainBtn = document.querySelector('.tab-btn[data-tab="' + mainTab + '"]');
+          if (mainBtn) mainBtn.click();
+          var subBtn = document.querySelector('.comix-sub-btn[data-sub="' + subTab + '"]');
+          if (subBtn) subBtn.click();
+          return;
+        }
+      }
+
+      var validTabs = ['home', 'comix', 'guides', 'work', 'contact'];
       if (hash && validTabs.indexOf(hash) !== -1) {
         var btn = document.querySelector('.tab-btn[data-tab="' + hash + '"]');
         if (btn) btn.click();
